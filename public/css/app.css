@@ -1,0 +1,11 @@
+#options {
+	float: right;
+}
+
+#header > h1 {
+	float: left;
+}
+
+#content {
+	clear: both;
+}

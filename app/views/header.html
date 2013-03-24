@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>{{.title}}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/app.css">
+    <link rel="shortcut icon" type="image/png" href="/public/images/favicon.png">
+    <script src="/public/js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+    {{range .moreStyles}}
+      <link rel="stylesheet" type="text/css" href="/public/{{.}}">
+    {{end}}
+    {{range .moreScripts}}
+      <script src="/public/{{.}}" type="text/javascript" charset="utf-8"></script>
+    {{end}}
+  </head>
+  <body>
+    <div id="header">
+      <h1>bloggo weblogging platform</h1>
+      {{if .user}}
+        <div id="options">
+          Connected as {{.user.Firstname}} {{.user.Lastname}}
+          |
+          <a href="{{url "User.Logout"}}">Logout</a>
+        </div>
+      {{else}}
+        <div id="options">
+          <a href="{{url "User.LoginForm"}}">Login</a>
+          |
+          <a href="{{url "User.RegisterForm"}}">Register</a>
+        </div>
+      {{end}}
+    </div>
+
+    <div id="content">
+      {{if .flash.error}}
+        <p class="fError">
+          <strong>{{.flash.error}}</strong>
+        </p>
+      {{end}}
+      {{if .flash.success}}
+        <p class="fSuccess">
+          <strong>{{.flash.success}}</strong>
+        </p>
+      {{end}}
