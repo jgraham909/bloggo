@@ -3,31 +3,45 @@
 
 <h1>Register</h1>
 
-<form action="{{url "User.Register"}}"  id="user-register" method="POST">
-  <p class="field">
-    <label>First Name:</label>
-    <input type="text" name="Firstname" placeholder="firstname" value="{{.flash.firstname}}" />
-  </p>
-  <p class="field">
-    <label>Last Name:</label>
-    <input type="text" name="Lastname" placeholder="lastname" value="{{.flash.lastname}}" />
-  </p>
+<form action="{{url "User.Register"}}"  id="user-register" method="POST" class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">First Name</label>
+    <div class="controls">
+      <input type="text" name="Firstname" placeholder="firstname" value="{{.flash.firstname}}" />
+    </div>
+  </div>
 
-  <p class="field">
-    <label>Email Address:</label>
-    <input type="text" name="Email" placeholder="email address" value="{{.flash.email}}" />
-  </p>
-    <p class="field">
-    <label>Password:</label>
-    <input type="password" name="Password" placeholder="password" />
-  </p>
-  <p class="field">
-    <label>Password Confirm:</label>
-    <input type="password" name="Password.confirm" placeholder="password" />
-  </p>
-  <p class="buttons">
-    <input type="submit" value="Register" />
-  </p>
+  <div class="control-group">
+    <label class="control-label">Last Name</label>
+    <div class="controls">
+      <input type="text" name="Lastname" placeholder="lastname" value="{{.flash.lastname}}" />
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Email Address</label>
+    <div class="controls">
+      <input type="text" name="Email" placeholder="email address" value="{{.flash.email}}" />
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Password</label>
+    <div class="controls">
+      <input type="password" name="Password" placeholder="password" />
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Password Confirm</label>
+    <div class="controls">
+      <input type="password" name="Password.confirm" placeholder="password" />
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <input type="submit" value="Register" class="btn btn-primary"/>
+  </div>
 </form>
 
 {{template "footer.html" .}}

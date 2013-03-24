@@ -3,18 +3,24 @@
 
 <h1>Login</h1>
 
-<form action="{{url "User.Login"}}"  id="user-login" method="POST">
-  <p class="field">
-    <label>Email Address:</label>
-    <input type="text" name="Email" placeholder="email address" value="{{.flash.email}}" />
-  </p>
-  <p class="field">
-    <label>Password:</label>
-    <input type="password" name="Password" placeholder="password" />
-  </p>
-  <p class="buttons">
-    <input type="submit" value="Login" />
-  </p>
+<form action="{{url "User.Login"}}"  id="user-login" method="POST" class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">Email Address</label>
+    <div class="controls">
+      <input type="text" name="Email" placeholder="email address" value="{{.flash.email}}" />
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Password</label>
+    <div class="controls">
+      <input type="password" name="Password" placeholder="password" />
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <input type="submit" value="Login" class="btn btn-primary"/>
+  </div>
 </form>
 
 {{template "footer.html" .}}
