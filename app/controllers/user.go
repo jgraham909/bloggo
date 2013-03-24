@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"bloggo/app/models"
 	"code.google.com/p/go.crypto/bcrypt"
 	"fmt"
+	"github.com/jgraham909/bloggo/app/models"
 	m "github.com/jgraham909/revmgo/app/controllers"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo/bson"
