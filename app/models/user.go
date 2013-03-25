@@ -17,30 +17,31 @@ type User struct {
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("User(%s %s)", u.Firstname, u.Lastname)
+	return fmt.Sprintf("%s %s", u.Firstname, u.Lastname)
 }
 
-var userRegex = regexp.MustCompile("^\\w*$")
+var nameRegex = regexp.MustCompile("^\\w*$")
 
 func (user *User) Validate(v *revel.Validation) {
 	v.Check(user.Firstname,
 		revel.Required{},
 		revel.MinSize{1},
 		revel.MaxSize{64},
-		revel.Match{userRegex},
+		revel.Match{nameRegex},
 	)
 
 	v.Check(user.Lastname,
 		revel.Required{},
 		revel.MinSize{1},
 		revel.MaxSize{64},
-		revel.Match{userRegex},
+		revel.Match{nameRegex},
 	)
 
 	v.Check(user.Email,
 		revel.Required{},
-		revel.Email{},
 	)
+
+	v.Email(user.Email)
 
 	ValidatePassword(v, user.Password).
 		Key("user.Password")
