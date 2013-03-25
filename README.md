@@ -14,4 +14,4 @@ Left to do;
     * Search
     * Comments(?)
     * Aliases(?)
-    * hallo.js(?)
+    * [hallo.js](http://hallojs.org/ "inline editing")
