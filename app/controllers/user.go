@@ -4,48 +4,16 @@ import (
 	"code.google.com/p/go.crypto/bcrypt"
 	"fmt"
 	"github.com/jgraham909/bloggo/app/models"
-	m "github.com/jgraham909/revmgo/app/controllers"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo/bson"
 )
 
 type User struct {
-	m.MgoController
-	models.User
-}
-
-func (c User) connected() bool {
-	// TODO Remove this when debugging isn't needed
-	// keep go from complaining about unused fmt
-	fmt.Printf("test")
-
-	if _, ok := c.Session["user"]; ok {
-		return true
-	}
-	return false
-}
-
-func (c User) getCurrentUser() models.User {
-	u := models.User{}
-
-	if email, ok := c.Session["user"]; ok {
-		u = c.getUser(email)
-	}
-	return u
-}
-
-func (c User) getUser(Email string) models.User {
-	u := models.User{}
-
-	coll := c.MSession.DB("bloggo").C("users")
-	query := coll.Find(bson.M{"Email": Email})
-	query.One(&u)
-
-	return u
+	Application
 }
 
 func (c User) Index() revel.Result {
-	if c.connected() != false {
+	if c.UserAuthenticated() != false {
 		return c.Redirect(User.Login)
 	}
 
@@ -57,7 +25,7 @@ func (c User) Index() revel.Result {
 func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result {
 	fmt.Printf("SNU %v \n", user.Email)
 
-	if exists := c.getUser(user.Email); exists.Email == user.Email {
+	if exists := c.GetUser(user.Email); exists.Email == user.Email {
 		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
 		c.Validation.Required(user.Email != exists.Email).
 			Message(msg)
@@ -101,7 +69,7 @@ func (c User) SaveUser(user *models.User, verifyPassword string) revel.Result {
 }
 
 func (c User) Login(Email, Password string) revel.Result {
-	user := c.getUser(Email)
+	user := c.GetUser(Email)
 
 	if user.Email != "" {
 		err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(Password))
@@ -118,7 +86,7 @@ func (c User) Login(Email, Password string) revel.Result {
 }
 
 func (c User) LoginForm() revel.Result {
-	if c.connected() == false {
+	if c.UserAuthenticated() == false {
 		return c.Render()
 	}
 

@@ -19,32 +19,7 @@
   </head>
   <body>
     <div id="header">
-      <h1><a href="{{url "Application.Index"}}">bloggo weblogging platform</a></h1>
-      {{if .user}}
-        <div id="options">
-          Connected as {{.user.Firstname}} {{.user.Lastname}}
-          |
-          <a href="{{url "User.Logout"}}" class="btn btn-secondary">Logout</a>
-        </div>
-      {{else}}
-        <div id="options">
-          <a href="{{url "User.LoginForm"}}">Login</a>
-          |
-          <a href="{{url "User.RegisterForm"}}">Register</a>
-        </div>
-      {{end}}
+      {{template "navbar.html" .}}
     </div>
-
     <div id="content">
-      {{if .flash.error}}
-        <div class="alert alert-error">
-          <a class="close" data-dismiss="alert">×</a>
-          {{.flash.error}}
-        </div>
-      {{end}}
-      {{if .flash.success}}
-        <div class="alert alert-success">
-          <a class="close" data-dismiss="alert">×</a>
-          {{.flash.success}}
-        </div>
-      {{end}}
+
