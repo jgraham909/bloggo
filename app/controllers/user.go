@@ -13,18 +13,20 @@ type User struct {
 }
 
 func (c User) Index() revel.Result {
-	if c.UserAuthenticated() != false {
-		return c.Redirect(User.Login)
+	if c.User != nil {
+		action := "/User/SaveExistingUser"
+		user := c.User
+		// TODO Populate form & Save properly
+		return c.Render(user, action)
 	}
+	return c.Redirect(User.Login)
+}
 
-	// Todo change to redirect to view/edit user account
-	c.Flash.Error("Please log in first")
-	return c.Render()
+func (c User) SaveExistingUser(user *models.User, verifyPassword string) revel.Result {
+	return c.SaveUser(user)
 }
 
 func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result {
-	fmt.Printf("SNU %v \n", user.Email)
-
 	if exists := c.GetUser(user.Email); exists.Email == user.Email {
 		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
 		c.Validation.Required(user.Email != exists.Email).
@@ -32,14 +34,16 @@ func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result
 	} else {
 		user.Id = bson.NewObjectId()
 	}
-	return c.SaveUser(user, verifyPassword)
-}
 
-func (c User) SaveUser(user *models.User, verifyPassword string) revel.Result {
-	fmt.Printf("SaveUser(user): %v\n", user)
 	c.Validation.Required(verifyPassword)
 	c.Validation.Required(verifyPassword == user.Password).
 		Message("Password does not match")
+
+	return c.SaveUser(user)
+}
+
+func (c User) SaveUser(user *models.User) revel.Result {
+	fmt.Printf("SaveUser(user): %v\n", user)
 
 	user.Validate(c.Validation)
 
@@ -95,7 +99,8 @@ func (c User) LoginForm() revel.Result {
 }
 
 func (c User) RegisterForm() revel.Result {
-	return c.Render()
+	action := "/User/SaveNewUser"
+	return c.Render(action)
 }
 
 func (c User) Logout() revel.Result {

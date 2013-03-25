@@ -1,0 +1,48 @@
+<h1>{{.title}}</h1>
+
+<form action="{{.action}}"  id="user-register" method="POST" class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="first-name">First Name</label>
+    <div class="controls">
+      <input type="text" id="first-name" name="user.Firstname" placeholder="firstname" value="{{index .flash "user.Firstname"}}"/>
+      <span class="help-inline error">{{index .errors "user.Firstname"}}</span>
+
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="last-name">Last Name</label>
+    <div class="controls">
+      <input type="text" id="last-name" name="user.Lastname" placeholder="lastname" value="{{index .flash "user.Lastname"}}"/>
+      <span class="help-inline error">{{index .errors "user.Lastname"}}</span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="email">Email Address</label>
+    <div class="controls">
+      <input type="text" id="email" name="user.Email" placeholder="email address" value="{{index .flash "user.Email"}}"/>
+      <span class="help-inline error">{{index .errors "user.Email"}}</span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="password">Password</label>
+    <div class="controls">
+      <input type="password" id="password" name="user.Password" placeholder="password"  class="{{errorClass "Password" .}}"/>
+      <span class="help-inline error">{{index .errors "user.Password"}}</span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="password-verify">Password Confirm</label>
+    <div class="controls">
+      <input type="password" id="password-verify" name="verifyPassword" placeholder="password confirm" />
+      <span class="help-inline error">{{.errors.verifyPassword}}</span>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <input type="submit" value="Register" class="btn btn-primary"/>
+  </div>
+</form>
