@@ -30,6 +30,11 @@ func (c User) SaveExistingUser(user *models.User, verifyPassword string, ObjectI
 		user.Id = c.User.Id
 		user.Validate(c.Validation)
 
+		// Only validate the password if either is non-empty
+		if user.Password != "" || verifyPassword != "" {
+			user.ValidatePassword(c.Validation, verifyPassword)
+		}
+
 		if c.Validation.HasErrors() {
 			c.Validation.Keep()
 			c.FlashParams()
@@ -57,11 +62,8 @@ func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result
 		user.Id = bson.NewObjectId()
 	}
 
-	c.Validation.Required(verifyPassword)
-	c.Validation.Required(verifyPassword == user.Password).
-		Message("Password does not match")
-
 	user.Validate(c.Validation)
+	user.ValidatePassword(c.Validation, verifyPassword)
 
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
@@ -85,7 +87,7 @@ func (c User) Login(Email, Password string) revel.Result {
 		err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(Password))
 		if err == nil {
 			c.Session["user"] = Email
-			c.Flash.Success("Welcome, " + Email)
+			c.Flash.Success("Welcome, " + user.String())
 			return c.Redirect(Application.Index)
 		}
 	}

@@ -46,11 +46,16 @@ func (user *User) Validate(v *revel.Validation) {
 	v.Email(user.Email)
 }
 
-func ValidatePassword(v *revel.Validation, password string) *revel.ValidationResult {
-	return v.Check(password,
+func (user *User) ValidatePassword(v *revel.Validation, verifyPassword string) {
+	v.Check(user.Password,
 		revel.Required{},
 		revel.MinSize{8},
 	)
+	v.Check(verifyPassword,
+		revel.Required{},
+		revel.MinSize{8},
+	)
+	v.Required(user.Password == verifyPassword).Message("The passwords do not match.")
 }
 
 func (u *User) GetByEmail(s *mgo.Session, Email string) *User {
