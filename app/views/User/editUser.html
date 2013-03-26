@@ -1,48 +1,66 @@
 <h1>{{.title}}</h1>
 
 <form action="{{.action}}"  id="user-register" method="POST" class="form-horizontal">
-  <div class="control-group">
-    <label class="control-label" for="first-name">First Name</label>
+  {{with $field := field "ObjectId" .}}
+    <input type="hidden" id="{{$field.Id}}" name="{{$field.Name}}" value="{{$field.Value}}" />
+  {{end}}
+
+  {{with $field := field "user.Firstname" .}}
+    <div class="control-group">
+    <label class="control-label" for="{{$field.Id}}">First Name</label>
     <div class="controls">
-      <input type="text" id="first-name" name="user.Firstname" placeholder="firstname" value="{{index .flash "user.Firstname"}}"/>
-      <span class="help-inline error">{{index .errors "user.Firstname"}}</span>
+      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="firstname" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}"/>
+      <span class="help-inline error">{{$field.Error}}</span>
 
     </div>
   </div>
+  {{end}}
 
-  <div class="control-group">
-    <label class="control-label" for="last-name">Last Name</label>
+  {{with $field := field "user.Lastname" .}}
+    <div class="control-group">
+    <label class="control-label" for="{{$field.Id}}">Last Name</label>
     <div class="controls">
-      <input type="text" id="last-name" name="user.Lastname" placeholder="lastname" value="{{index .flash "user.Lastname"}}"/>
-      <span class="help-inline error">{{index .errors "user.Lastname"}}</span>
+      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="lastname" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}"/>
+      <span class="help-inline error">{{$field.Error}}</span>
+
     </div>
   </div>
+  {{end}}
 
-  <div class="control-group">
-    <label class="control-label" for="email">Email Address</label>
+  {{with $field := field "user.Email" .}}
+    <div class="control-group">
+    <label class="control-label" for="{{$field.Id}}">Email</label>
     <div class="controls">
-      <input type="text" id="email" name="user.Email" placeholder="email address" value="{{index .flash "user.Email"}}"/>
-      <span class="help-inline error">{{index .errors "user.Email"}}</span>
+      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="email" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}"/>
+      <span class="help-inline error">{{$field.Error}}</span>
+
     </div>
   </div>
+  {{end}}
 
-  <div class="control-group">
-    <label class="control-label" for="password">Password</label>
+  {{with $field := field "user.Password" .}}
+    <div class="control-group">
+    <label class="control-label" for="{{$field.Id}}">Password</label>
     <div class="controls">
-      <input type="password" id="password" name="user.Password" placeholder="password"  class="{{errorClass "Password" .}}"/>
-      <span class="help-inline error">{{index .errors "user.Password"}}</span>
+      <input type="password" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="password" value=""/>
+      <span class="help-inline error">{{$field.Error}}</span>
+
     </div>
   </div>
+  {{end}}
 
-  <div class="control-group">
-    <label class="control-label" for="password-verify">Password Confirm</label>
+  {{with $field := field "verifyPassword" .}}
+    <div class="control-group">
+    <label class="control-label" for="{{$field.Id}}">Password Confirm</label>
     <div class="controls">
-      <input type="password" id="password-verify" name="verifyPassword" placeholder="password confirm" />
-      <span class="help-inline error">{{.errors.verifyPassword}}</span>
+      <input type="password" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="password" value=""/>
+      <span class="help-inline error">{{$field.Error}}</span>
+
     </div>
   </div>
+  {{end}}
 
   <div class="form-actions">
-    <input type="submit" value="Register" class="btn btn-primary"/>
+    <input type="submit" value="Save" class="btn btn-primary"/>
   </div>
 </form>
