@@ -17,7 +17,6 @@ func (c User) Index() revel.Result {
 		action := "/User/SaveExistingUser"
 		user := c.User
 		ObjectId := bson.ObjectId.Hex(c.User.Id)
-		// TODO Populate form & Save properly
 		return c.Render(user, action, ObjectId)
 	}
 	return c.Redirect(User.Login)

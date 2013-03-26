@@ -7,9 +7,6 @@ See the related [discussion](https://groups.google.com/forum/#!topic/revel-frame
 
 Left to do;
 
-*   Refactor to use models properly for loading, querying & saving. Pass in either the session or the controller
-*   User editing
-    *  attempt to avoid duplication of code surrounding Create, Update &amp; change password workflows
 *   Article CRUD
     * Fields {Title, Tags, Body}
     * Search
