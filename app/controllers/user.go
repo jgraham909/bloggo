@@ -27,7 +27,7 @@ func (c User) SaveExistingUser(user *models.User, verifyPassword string) revel.R
 }
 
 func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result {
-	if exists := c.GetUser(user.Email); exists.Email == user.Email {
+	if exists := user.GetUserByEmail(c.MSession, user.Email); exists.Email == user.Email {
 		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
 		c.Validation.Required(user.Email != exists.Email).
 			Message(msg)
@@ -54,18 +54,7 @@ func (c User) SaveUser(user *models.User) revel.Result {
 		return c.Redirect(User.RegisterForm)
 	}
 
-	user.HashedPassword, _ = bcrypt.GenerateFromPassword(
-		[]byte(user.Password), bcrypt.DefaultCost)
-
-	// Empty out the unhashed password to ensure it is not stored
-	user.Password = ""
-
-	coll := c.MSession.DB("bloggo").C("users")
-	_, err := coll.Upsert(bson.M{"_id": user.Id}, user)
-	if err != nil {
-		revel.WARN.Printf("Unable to save user account: %v error", user, err)
-		c.Flash.Error("Unable to save user account, please contact the site administrator")
-	}
+	user.Save(c.MSession)
 
 	c.Session["user"] = user.Email
 	c.Flash.Success("Welcome, " + user.String())
@@ -73,7 +62,8 @@ func (c User) SaveUser(user *models.User) revel.Result {
 }
 
 func (c User) Login(Email, Password string) revel.Result {
-	user := c.GetUser(Email)
+	user := new(models.User)
+	user = user.GetUserByEmail(c.MSession, Email)
 
 	if user.Email != "" {
 		err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(Password))
