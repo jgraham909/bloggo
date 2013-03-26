@@ -1,0 +1,10 @@
+{{set . "title" "Articles"}}
+{{template "header.html" .}}
+
+{{if .articles}}
+	{{range $article := .articles}}
+		{{template "Blog/view.html" $article}}
+	{{end}}
+	{{template "footer.html" .}}
+
+{{end}}

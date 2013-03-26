@@ -2,7 +2,9 @@
 <div class="navbar-inner">
   <a class="brand" href="{{url "Application.Index"}}" {{if eq .Controller.Type "Application.Index"}}class="active"{{end}}>Bloggo</a>
   <ul class="nav">
-      <li><a href="{{url "Application.Index"}}">Home</a></li>
+      {{if .user}}
+      <li><a href="{{url "Blog.Add"}}">Create Article</a></li>
+      {{end}}
   </ul>
   <ul class="nav pull-right">
     {{if .user}}
