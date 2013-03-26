@@ -44,10 +44,6 @@ func (user *User) Validate(v *revel.Validation) {
 	)
 
 	v.Email(user.Email)
-
-	ValidatePassword(v, user.Password).
-		Key("user.Password")
-
 }
 
 func ValidatePassword(v *revel.Validation, password string) *revel.ValidationResult {
@@ -57,7 +53,7 @@ func ValidatePassword(v *revel.Validation, password string) *revel.ValidationRes
 	)
 }
 
-func (u *User) GetUserByEmail(s *mgo.Session, Email string) *User {
+func (u *User) GetByEmail(s *mgo.Session, Email string) *User {
 	acct := new(User)
 
 	coll := s.DB("bloggo").C("users")
@@ -67,11 +63,27 @@ func (u *User) GetUserByEmail(s *mgo.Session, Email string) *User {
 	return acct
 }
 
-func (u *User) Save(s *mgo.Session) error {
-	u.HashedPassword, _ = bcrypt.GenerateFromPassword(
-		[]byte(u.Password), bcrypt.DefaultCost)
+func (u *User) GetById(s *mgo.Session, Id bson.ObjectId) *User {
+	acct := new(User)
+	coll := s.DB("bloggo").C("users")
+	query := coll.FindId(Id)
+	query.One(acct)
 
-	// Empty out the unhashed password to ensure it is not stored
+	return acct
+}
+
+func (u *User) Save(s *mgo.Session) error {
+	// Calculate the new password hash or load the existing one so we don't clobber it on save.
+	if u.Password != "" {
+		u.HashedPassword, _ = bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	} else {
+		existing := u.GetById(s, u.Id)
+		if existing.HashedPassword != nil {
+			u.HashedPassword = existing.HashedPassword
+		}
+	}
+
+	// Empty out the unhashed password to ensure it is not stored in plaintext
 	u.Password = ""
 
 	coll := s.DB("bloggo").C("users")

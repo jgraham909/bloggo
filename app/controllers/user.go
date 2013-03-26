@@ -16,18 +16,40 @@ func (c User) Index() revel.Result {
 	if c.User != nil {
 		action := "/User/SaveExistingUser"
 		user := c.User
+		ObjectId := bson.ObjectId.Hex(c.User.Id)
 		// TODO Populate form & Save properly
-		return c.Render(user, action)
+		return c.Render(user, action, ObjectId)
 	}
 	return c.Redirect(User.Login)
 }
 
-func (c User) SaveExistingUser(user *models.User, verifyPassword string) revel.Result {
-	return c.SaveUser(user)
+func (c User) SaveExistingUser(user *models.User, verifyPassword string, ObjectId string) revel.Result {
+	// Weak access control (only let users change their own account)
+	if c.User.Id == bson.ObjectIdHex(ObjectId) {
+		// Don't trust user submitted id... load from session.
+		user.Id = c.User.Id
+		user.Validate(c.Validation)
+
+		if c.Validation.HasErrors() {
+			c.Validation.Keep()
+			c.FlashParams()
+			c.Flash.Error("Please correct the errors below.")
+			return c.Redirect(User.Index)
+		}
+
+		user.Save(c.MSession)
+
+		// Refresh the session in case the email address was changed.
+		c.Session["user"] = user.Email
+
+		c.Flash.Success("Successfully updated account")
+		return c.Redirect(Application.Index)
+	}
+	return c.Forbidden("You can only edit your own account. ")
 }
 
 func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result {
-	if exists := user.GetUserByEmail(c.MSession, user.Email); exists.Email == user.Email {
+	if exists := user.GetByEmail(c.MSession, user.Email); exists.Email == user.Email {
 		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
 		c.Validation.Required(user.Email != exists.Email).
 			Message(msg)
@@ -38,12 +60,6 @@ func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result
 	c.Validation.Required(verifyPassword)
 	c.Validation.Required(verifyPassword == user.Password).
 		Message("Password does not match")
-
-	return c.SaveUser(user)
-}
-
-func (c User) SaveUser(user *models.User) revel.Result {
-	fmt.Printf("SaveUser(user): %v\n", user)
 
 	user.Validate(c.Validation)
 
@@ -63,7 +79,7 @@ func (c User) SaveUser(user *models.User) revel.Result {
 
 func (c User) Login(Email, Password string) revel.Result {
 	user := new(models.User)
-	user = user.GetUserByEmail(c.MSession, Email)
+	user = user.GetByEmail(c.MSession, Email)
 
 	if user.Email != "" {
 		err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(Password))
