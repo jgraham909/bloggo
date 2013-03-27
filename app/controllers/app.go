@@ -23,15 +23,12 @@ func (c *Application) Setup() revel.Result {
 	// If there is an active user session load the User data for this user.
 	if email, ok := c.Session["user"]; ok {
 		c.User = c.User.GetByEmail(c.MSession, email)
+		c.RenderArgs["user"] = c.User
 	}
 	return nil
 }
 
 func (c Application) Index() revel.Result {
-	if c.User != nil {
-		user := c.User
-		return c.Render(user)
-	}
 	return c.Render()
 }
 

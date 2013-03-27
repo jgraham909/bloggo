@@ -15,9 +15,8 @@ type User struct {
 func (c User) Index() revel.Result {
 	if c.User != nil {
 		action := "/User/SaveExistingUser"
-		user := c.User
 		ObjectId := bson.ObjectId.Hex(c.User.Id)
-		return c.Render(user, action, ObjectId)
+		return c.Render(action, ObjectId)
 	}
 	return c.Redirect(User.Login)
 }
