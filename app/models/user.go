@@ -15,7 +15,7 @@ type User struct {
 	Lastname       string        `Lastname`
 	Email          string        `Email`
 	HashedPassword []byte        `HashedPassword`
-	Password       string
+	Password       string        `bson:"omitempty"`
 }
 
 func (u *User) String() string {
