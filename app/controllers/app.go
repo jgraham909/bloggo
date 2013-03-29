@@ -29,7 +29,7 @@ func (c *Application) Setup() revel.Result {
 }
 
 func (c Application) Index() revel.Result {
-	return c.Render()
+	return c.Redirect(Blog.Index)
 }
 
 func (c Application) UserAuthenticated() bool {

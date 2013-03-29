@@ -38,7 +38,7 @@
   </div>
   {{end}}
 
-  {{with $field := field "user.Password" .}}
+  {{with $field := field "password.Pass" .}}
     <div class="control-group">
     <label class="control-label" for="{{$field.Id}}">Password</label>
     <div class="controls">
@@ -49,7 +49,7 @@
   </div>
   {{end}}
 
-  {{with $field := field "verifyPassword" .}}
+  {{with $field := field "password.PassConfirm" .}}
     <div class="control-group">
     <label class="control-label" for="{{$field.Id}}">Password Confirm</label>
     <div class="controls">

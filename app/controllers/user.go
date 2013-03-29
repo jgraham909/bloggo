@@ -21,7 +21,7 @@ func (c User) Index() revel.Result {
 	return c.Redirect(User.Login)
 }
 
-func (c User) SaveExistingUser(user *models.User, verifyPassword string, ObjectId string) revel.Result {
+func (c User) SaveExistingUser(user *models.User, password models.Password, ObjectId string) revel.Result {
 	// Weak access control (only let users change their own account)
 	if c.User.Id == bson.ObjectIdHex(ObjectId) {
 		// Don't trust user submitted id... load from session.
@@ -29,8 +29,8 @@ func (c User) SaveExistingUser(user *models.User, verifyPassword string, ObjectI
 		user.Validate(c.Validation)
 
 		// Only validate the password if either is non-empty
-		if user.Password != "" || verifyPassword != "" {
-			user.ValidatePassword(c.Validation, verifyPassword)
+		if password.Pass != "" || password.PassConfirm != "" {
+			user.ValidatePassword(c.Validation, password)
 		}
 
 		if c.Validation.HasErrors() {
@@ -40,7 +40,7 @@ func (c User) SaveExistingUser(user *models.User, verifyPassword string, ObjectI
 			return c.Redirect(User.Index)
 		}
 
-		user.Save(c.MSession)
+		user.Save(c.MSession, password)
 
 		// Refresh the session in case the email address was changed.
 		c.Session["user"] = user.Email
@@ -51,7 +51,7 @@ func (c User) SaveExistingUser(user *models.User, verifyPassword string, ObjectI
 	return c.Forbidden("You can only edit your own account. ")
 }
 
-func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result {
+func (c User) SaveNewUser(user *models.User, password models.Password) revel.Result {
 	if exists := user.GetByEmail(c.MSession, user.Email); exists.Email == user.Email {
 		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
 		c.Validation.Required(user.Email != exists.Email).
@@ -61,7 +61,7 @@ func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result
 	}
 
 	user.Validate(c.Validation)
-	user.ValidatePassword(c.Validation, verifyPassword)
+	user.ValidatePassword(c.Validation, password)
 
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
@@ -70,7 +70,7 @@ func (c User) SaveNewUser(user *models.User, verifyPassword string) revel.Result
 		return c.Redirect(User.RegisterForm)
 	}
 
-	user.Save(c.MSession)
+	user.Save(c.MSession, password)
 
 	c.Session["user"] = user.Email
 	c.Flash.Success("Welcome, " + user.String())
