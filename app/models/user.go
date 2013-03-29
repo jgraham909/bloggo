@@ -15,7 +15,8 @@ type User struct {
 	Lastname       string        `Lastname`
 	Email          string        `Email`
 	HashedPassword []byte        `HashedPassword`
-	Password       string        `bson:"omitempty"`
+	Password       string
+	Meta           map[int][]string
 }
 
 func (u *User) String() string {
@@ -71,9 +72,11 @@ func (u *User) GetByEmail(s *mgo.Session, Email string) *User {
 func (u *User) GetById(s *mgo.Session, Id bson.ObjectId) *User {
 	acct := new(User)
 	coll := s.DB("bloggo").C("users")
-	query := coll.FindId(Id)
-	query.One(acct)
-
+	query := coll.Find(bson.M{"_id": Id})
+	err := query.One(acct)
+	if err != nil {
+		revel.WARN.Printf("Unable to load user by Id: %v error %v", Id, err)
+	}
 	return acct
 }
 

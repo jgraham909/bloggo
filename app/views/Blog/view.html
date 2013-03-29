@@ -1,6 +1,6 @@
 <h4>{{.Title}}</h4>
 <span class="label date">{{.Posted}}</span>
-<span class="label author">By:</span> {{.Author_id}}</span>
+<span class="label author">By:</span> {{index .Meta "author"}}</span>
 {{if .Tags}}
 <span class="label tags">Tags:</span>
 	{{range $tag := .Tags}}
