@@ -7,7 +7,8 @@ import (
 )
 
 type Application struct {
-	m.MgoController
+	*revel.Controller
+	m.MongoController
 	User *models.User
 }
 
