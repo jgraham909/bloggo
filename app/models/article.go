@@ -2,10 +2,15 @@ package models
 
 import (
 	"github.com/robfig/revel"
+	"github.com/russross/blackfriday"
+	"html/template"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
+	"strings"
 	"time"
 )
+
+const trimLength = 300
 
 type Article struct {
 	Id        bson.ObjectId `bson:"_id,omitempty"`
@@ -14,9 +19,9 @@ type Article struct {
 	Posted    time.Time     `bson: "Posted"`
 	Title     string        `bson:"Title"`
 	Body      string        `bson:"Body"`
-	Tags      []string      `bson:"Tags"`
+	Tags      string        `bson:"Tags"`
 	Alias     string        `bson:"Alias"`
-	Meta      map[string]string
+	Meta      map[string]interface{}
 }
 
 // Return the appropriate collection instance for this user.
@@ -33,9 +38,15 @@ func (article *Article) All(s *mgo.Session) []*Article {
 
 	for i, a := range articles {
 		if a.Meta == nil {
-			a.Meta = make(map[string]string)
+			a.Meta = make(map[string]interface{})
 		}
 		articles[i].Meta["author"] = a.GetAuthor(s).String()
+		articles[i].Meta["markdown"] = template.HTML(string(blackfriday.MarkdownBasic([]byte(a.Body))))
+		if len(a.Body) > trimLength {
+			articles[i].Meta["teaser"] = template.HTML(string(blackfriday.MarkdownBasic([]byte(a.Body[0:trimLength]))))
+		} else {
+			articles[i].Meta["teaser"] = template.HTML(string(blackfriday.MarkdownBasic([]byte(a.Body[0:len(a.Body)]))))
+		}
 	}
 	return articles
 }
@@ -78,6 +89,10 @@ func (article *Article) GetByIdString(s *mgo.Session, Id string) *Article {
 	return article.GetById(s, ObjectId)
 }
 
+func (article *Article) preSave() {
+
+}
+
 func (article *Article) Save(s *mgo.Session) error {
 	coll := article.Collection(s)
 	_, err := coll.Upsert(bson.M{"_id": article.Id}, article)
@@ -85,4 +100,8 @@ func (article *Article) Save(s *mgo.Session) error {
 		revel.WARN.Printf("Unable to save user account: %v error %v", article, err)
 	}
 	return err
+}
+
+func (article *Article) SplitTags() []string {
+	return strings.Split(article.Tags, ",")
 }
