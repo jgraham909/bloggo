@@ -40,7 +40,7 @@ func (c User) SaveExistingUser(user *models.User, password models.Password, Obje
 			return c.Redirect(User.Index)
 		}
 
-		user.Save(c.MSession, password)
+		user.Save(c.MongoSession, password)
 
 		// Refresh the session in case the email address was changed.
 		c.Session["user"] = user.Email
@@ -52,7 +52,7 @@ func (c User) SaveExistingUser(user *models.User, password models.Password, Obje
 }
 
 func (c User) SaveNewUser(user *models.User, password models.Password) revel.Result {
-	if exists := user.GetByEmail(c.MSession, user.Email); exists.Email == user.Email {
+	if exists := user.GetByEmail(c.MongoSession, user.Email); exists.Email == user.Email {
 		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
 		c.Validation.Required(user.Email != exists.Email).
 			Message(msg)
@@ -70,7 +70,7 @@ func (c User) SaveNewUser(user *models.User, password models.Password) revel.Res
 		return c.Redirect(User.RegisterForm)
 	}
 
-	user.Save(c.MSession, password)
+	user.Save(c.MongoSession, password)
 
 	c.Session["user"] = user.Email
 	c.Flash.Success("Welcome, " + user.String())
@@ -79,7 +79,7 @@ func (c User) SaveNewUser(user *models.User, password models.Password) revel.Res
 
 func (c User) Login(Email, Password string) revel.Result {
 	user := new(models.User)
-	user = user.GetByEmail(c.MSession, Email)
+	user = user.GetByEmail(c.MongoSession, Email)
 
 	if user.Email != "" {
 		err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(Password))

@@ -23,7 +23,7 @@ func init() {
 func (c *Application) Setup() revel.Result {
 	// If there is an active user session load the User data for this user.
 	if email, ok := c.Session["user"]; ok {
-		c.User = c.User.GetByEmail(c.MSession, email)
+		c.User = c.User.GetByEmail(c.MongoSession, email)
 		c.RenderArgs["user"] = c.User
 	}
 	return nil

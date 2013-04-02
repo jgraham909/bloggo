@@ -13,7 +13,7 @@ type Blog struct {
 
 func (c Blog) Index() revel.Result {
 	article := new(models.Article)
-	articles := article.All(c.MSession)
+	articles := article.All(c.MongoSession)
 
 	return c.Render(articles)
 }
@@ -43,7 +43,7 @@ func (c Blog) Create(article *models.Article) revel.Result {
 		article.Published = true
 		article.Posted = time.Now()
 		article.Id = bson.NewObjectId()
-		article.Save(c.MSession)
+		article.Save(c.MongoSession)
 	}
 	return c.Redirect(Application.Index)
 }
