@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"github.com/jgraham909/bloggo/app/models"
-	m "github.com/jgraham909/revmgo/app/controllers"
+	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
 )
 
 type Application struct {
 	*revel.Controller
-	m.MongoController
+	revmgo.MongoController
 	User *models.User
 }
 
