@@ -12,13 +12,6 @@ type Application struct {
 	User *models.User
 }
 
-func init() {
-	revel.InterceptMethod((*Application).Setup, revel.BEFORE)
-	revel.TemplateFuncs["nil"] = func(a interface{}) bool {
-		return a == nil
-	}
-}
-
 // Responsible for doing any necessary setup for each web request.
 func (c *Application) Setup() revel.Result {
 	// If there is an active user session load the User data for this user.
