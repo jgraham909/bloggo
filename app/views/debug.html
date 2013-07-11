@@ -11,7 +11,7 @@
 	<dl>
 	{{ range $index, $value := .flash}}
 		<dt>{{$index}}</dt>
-		<dd>{{$value}}</dt>
+		<dd>{{$value}}</dd>
 	{{end}}
 	</dl>
 
@@ -19,8 +19,7 @@
 	<dl>
 	{{ range $index, $value := .errors}}
 		<dt>{{$index}}</dt>
-		<dd>{{$value}}</dt>
+		<dd>{{$value}}</dd>
 	{{end}}
 	</dl>
-
 </div>
