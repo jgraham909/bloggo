@@ -1,7 +1,6 @@
 package app
 
 import "github.com/robfig/revel"
-import "fmt"
 
 var (
 	Db string
