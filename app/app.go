@@ -1,6 +1,8 @@
 package app
 
-import "github.com/robfig/revel"
+import (
+	"github.com/robfig/revel"
+)
 
 var (
 	Db string

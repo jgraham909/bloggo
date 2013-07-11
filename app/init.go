@@ -1,7 +1,9 @@
 package app
 
-import "github.com/robfig/revel"
-import "github.com/jgraham909/revmgo"
+import (
+	"github.com/jgraham909/revmgo"
+	"github.com/robfig/revel"
+)
 
 func init() {
 	revel.OnAppStart(revmgo.AppInit)
