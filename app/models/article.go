@@ -90,7 +90,7 @@ func (article *Article) Save(s *mgo.Session) error {
 	coll := Collection(article, s)
 	_, err := coll.Upsert(bson.M{"_id": article.Id}, article)
 	if err != nil {
-		revel.WARN.Printf("Unable to save user account: %v error %v", article, err)
+		revel.WARN.Printf("Unable to save article: %v error %v", article, err)
 	}
 	return err
 }
