@@ -5,12 +5,16 @@ import (
 )
 
 var (
-	Db string
+	DB string
 )
 
 func AppInit() {
+	RegisterDB()
+}
+
+func RegisterDB() {
 	var found bool
-	if Db, found = revel.Config.String("bloggo.db"); !found {
-		Db = "bloggo"
+	if DB, found = revel.Config.String("bloggo.db"); !found {
+		DB = "bloggo"
 	}
 }
