@@ -5,6 +5,7 @@ import "github.com/jgraham909/revmgo"
 
 func init() {
 	revel.OnAppStart(revmgo.AppInit)
+	revel.OnAppStart(AppInit)
 	revel.Filters = []revel.Filter{
 		revel.PanicFilter,             // Recover from panics and display an error page instead.
 		revel.RouterFilter,            // Use the routing table to select the right Action

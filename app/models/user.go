@@ -3,6 +3,7 @@ package models
 import (
 	"code.google.com/p/go.crypto/bcrypt"
 	"fmt"
+	"github.com/jgraham909/bloggo/app"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
@@ -24,7 +25,7 @@ type Password struct {
 
 // Return the appropriate collection instance for this user.
 func (user *User) Collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("bloggo").C("users")
+	return s.DB(app.Db).C("users")
 }
 
 func (user *User) String() string {

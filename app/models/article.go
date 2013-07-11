@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/jgraham909/bloggo/app"
 	"github.com/robfig/revel"
 	"github.com/russross/blackfriday"
 	"html/template"
@@ -26,7 +27,7 @@ type Article struct {
 
 // Return the appropriate collection instance for this user.
 func (article *Article) Collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("bloggo").C("articles")
+	return s.DB(app.Db).C("articles")
 }
 
 func (article *Article) All(s *mgo.Session) []*Article {
