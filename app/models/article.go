@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/jgraham909/bloggo/app"
 	"github.com/robfig/revel"
 	"github.com/russross/blackfriday"
 	"html/template"
@@ -25,16 +24,10 @@ type Article struct {
 	Meta      map[string]interface{}
 }
 
-// Return the appropriate collection instance for this user.
-func (article *Article) Collection(s *mgo.Session) *mgo.Collection {
-	return s.DB(app.Db).C("articles")
-}
-
 func (article *Article) All(s *mgo.Session) []*Article {
 	articles := []*Article{}
 
-	coll := article.Collection(s)
-	query := coll.Find(nil).Sort("-Published").Limit(10)
+	query := Collection(article, s).Find(nil).Sort("-Published").Limit(10)
 	query.All(&articles)
 
 	for i, a := range articles {
@@ -69,8 +62,7 @@ func (article *Article) Validate(v *revel.Validation) {
 func (article *Article) GetByTitle(s *mgo.Session, Title string) []Article {
 	articles := []Article{}
 
-	coll := article.Collection(s)
-	query := coll.Find(bson.M{"Title": Title})
+	query := Collection(article, s).Find(bson.M{"Title": Title})
 	query.One(articles)
 
 	return articles
@@ -78,8 +70,8 @@ func (article *Article) GetByTitle(s *mgo.Session, Title string) []Article {
 
 func (article *Article) GetById(s *mgo.Session, Id bson.ObjectId) *Article {
 	a := new(Article)
-	coll := a.Collection(s)
-	query := coll.FindId(Id)
+
+	query := Collection(article, s).FindId(Id)
 	query.One(a)
 
 	return a
@@ -95,7 +87,7 @@ func (article *Article) preSave() {
 }
 
 func (article *Article) Save(s *mgo.Session) error {
-	coll := article.Collection(s)
+	coll := Collection(article, s)
 	_, err := coll.Upsert(bson.M{"_id": article.Id}, article)
 	if err != nil {
 		revel.WARN.Printf("Unable to save user account: %v error %v", article, err)

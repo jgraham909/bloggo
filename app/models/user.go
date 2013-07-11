@@ -3,7 +3,6 @@ package models
 import (
 	"code.google.com/p/go.crypto/bcrypt"
 	"fmt"
-	"github.com/jgraham909/bloggo/app"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
@@ -21,11 +20,6 @@ type User struct {
 type Password struct {
 	Pass        string
 	PassConfirm string
-}
-
-// Return the appropriate collection instance for this user.
-func (user *User) Collection(s *mgo.Session) *mgo.Collection {
-	return s.DB(app.Db).C("users")
 }
 
 func (user *User) String() string {
@@ -76,8 +70,7 @@ func (user *User) Save(s *mgo.Session, p Password) error {
 		}
 	}
 
-	coll := user.Collection(s)
-	_, err := coll.Upsert(bson.M{"_id": user.Id}, user)
+	_, err := Collection(user, s).Upsert(bson.M{"_id": user.Id}, user)
 	if err != nil {
 		go revel.WARN.Printf("Unable to save user account: %v error %v", user, err)
 	}
@@ -92,8 +85,7 @@ func (user *User) Delete(s *mgo.Session) error {
 func (user *User) GetByEmail(s *mgo.Session, Email string) *User {
 	acct := new(User)
 
-	coll := user.Collection(s)
-	query := coll.Find(bson.M{"Email": Email})
+	query := Collection(user, s).Find(bson.M{"Email": Email})
 	query.One(acct)
 
 	return acct
@@ -101,8 +93,7 @@ func (user *User) GetByEmail(s *mgo.Session, Email string) *User {
 
 func (user *User) GetById(s *mgo.Session, Id bson.ObjectId) *User {
 	acct := new(User)
-	coll := user.Collection(s)
-	query := coll.Find(bson.M{"_id": Id})
+	query := Collection(user, s).Find(bson.M{"_id": Id})
 	err := query.One(acct)
 	if err != nil {
 		revel.WARN.Printf("Unable to load user by Id: %v error %v", Id, err)
