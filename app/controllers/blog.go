@@ -47,3 +47,9 @@ func (c Blog) Create(article *models.Article) revel.Result {
 	}
 	return c.Redirect(Application.Index)
 }
+
+func (c Blog) View(id string) revel.Result {
+	article := new(models.Article)
+	article = article.GetByIdString(c.MongoSession, id)
+	return c.Render(article)
+}
