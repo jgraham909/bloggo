@@ -8,6 +8,6 @@
 <span class="label tags">Tags:</span>
 <span class="label secondary">{{.article.Tags}}</span>
 {{end}}
-<p>markdown{{index .article.Meta "markdown"}}</p>
+<p>{{index .article.Meta "markdown"}}</p>
 
 {{template "footer.html" .}}
