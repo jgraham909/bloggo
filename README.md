@@ -18,8 +18,10 @@ The database is configurable via the app.conf directive `bloggo.db` if you do no
 Left to do;
 
 *   Article CRUD
-    * Fields {Title, Tags, Body}
-    * Search
-    * Comments(?)
-    * Aliases(?)
-    * [hallo.js](http://hallojs.org/ "inline editing")
+    * Split comma-separated tags as individual tags on save, remap to comma-sep on update.
+    * Update
+    * Delete
+* View by tags
+* Search
+* Aliases
+* [hallo.js](http://hallojs.org/ "inline editing")(?)
