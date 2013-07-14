@@ -33,7 +33,6 @@ func init() {
 }
 
 var ObjectIdBinder = revel.Binder{
-	// Bind: func(params *revel.Params, name string, typ reflect.Type) reflect.Value {
 	Bind: revel.ValueBinder(func(val string, typ reflect.Type) reflect.Value {
 		// revel.WARN.Print("ObjectIdBinder.Bind - we need an ObjectId here!")
 		if len(val) == 0 {
@@ -43,8 +42,6 @@ var ObjectIdBinder = revel.Binder{
 		if bson.IsObjectIdHex(val) {
 			// revel.WARN.Print("ObjectIdBinder.Bind - we have a valid ObjectId here!")
 			objId := bson.ObjectIdHex(val)
-			// revel.INFO.Printf("val: %s\n", val)
-			// revel.INFO.Printf("typ: %#v\n", typ)
 			return reflect.ValueOf(objId)
 		} else {
 			revel.ERROR.Print("ObjectIdBinder.Bind - Unsure how to handle invalid ObjectId..?")
@@ -52,9 +49,7 @@ var ObjectIdBinder = revel.Binder{
 		}
 	}),
 	Unbind: func(output map[string]string, name string, val interface{}) {
-		revel.WARN.Print("ObjectIdBinder.Unbind called! - not sure when this is used, couldn't trigger it")
-		revel.INFO.Printf("output: %#v\n", output)
-		revel.INFO.Printf("val: %#v\n", val)
+		revel.WARN.Print("ObjectIdBinder.Unbind called! - not sure when this is used, probably when a ObjectId needs to be serialized to a string?!..")
 		output[name] = (val.(bson.ObjectId)).Hex()
 	},
 }
