@@ -21,9 +21,8 @@ func (c Blog) Index() revel.Result {
 func (c Blog) Add() revel.Result {
 	if c.User != nil {
 		article := models.Article{}
-		ObjectId := bson.ObjectId.Hex(article.Id)
 		action := "/Blog/Create"
-		return c.Render(action, ObjectId, article)
+		return c.Render(action, article)
 	}
 	return c.Forbidden("You must be logged in to create articles.")
 }

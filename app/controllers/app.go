@@ -27,8 +27,6 @@ func (c Application) Index() revel.Result {
 }
 
 func (c Application) UserAuthenticated() bool {
-	if _, ok := c.Session["user"]; ok {
-		return true
-	}
-	return false
+	_, ok := c.Session["user"]
+	return ok
 }

@@ -3,6 +3,8 @@ package app
 import (
 	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
+	"labix.org/v2/mgo/bson"
+	"reflect"
 )
 
 func init() {
@@ -24,4 +26,35 @@ func init() {
 	revel.TemplateFuncs["nil"] = func(a interface{}) bool {
 		return a == nil
 	}
+
+	// bson.ObjectId binder
+	objId := bson.NewObjectId()
+	revel.TypeBinders[reflect.TypeOf(objId)] = ObjectIdBinder
+}
+
+var ObjectIdBinder = revel.Binder{
+	// Bind: func(params *revel.Params, name string, typ reflect.Type) reflect.Value {
+	Bind: revel.ValueBinder(func(val string, typ reflect.Type) reflect.Value {
+		// revel.WARN.Print("ObjectIdBinder.Bind - we need an ObjectId here!")
+		if len(val) == 0 {
+			// revel.WARN.Print("ObjectIdBinder.Bind - length zero - return Zero!")
+			return reflect.Zero(typ)
+		}
+		if bson.IsObjectIdHex(val) {
+			// revel.WARN.Print("ObjectIdBinder.Bind - we have a valid ObjectId here!")
+			objId := bson.ObjectIdHex(val)
+			// revel.INFO.Printf("val: %s\n", val)
+			// revel.INFO.Printf("typ: %#v\n", typ)
+			return reflect.ValueOf(objId)
+		} else {
+			revel.ERROR.Print("ObjectIdBinder.Bind - Unsure how to handle invalid ObjectId..?")
+			return reflect.Zero(typ)
+		}
+	}),
+	Unbind: func(output map[string]string, name string, val interface{}) {
+		revel.WARN.Print("ObjectIdBinder.Unbind called! - not sure when this is used, couldn't trigger it")
+		revel.INFO.Printf("output: %#v\n", output)
+		revel.INFO.Printf("val: %#v\n", val)
+		output[name] = (val.(bson.ObjectId)).Hex()
+	},
 }
