@@ -15,15 +15,15 @@ type User struct {
 func (c User) Index() revel.Result {
 	if c.User != nil {
 		action := "/User/SaveExistingUser"
-		ObjectId := bson.ObjectId.Hex(c.User.Id)
-		return c.Render(action, ObjectId)
+		user := c.User
+		return c.Render(action, user)
 	}
 	return c.Redirect(User.Login)
 }
 
-func (c User) SaveExistingUser(user *models.User, password models.Password, ObjectId string) revel.Result {
+func (c User) SaveExistingUser(user *models.User, password models.Password) revel.Result {
 	// Weak access control (only let users change their own account)
-	if c.User.Id == bson.ObjectIdHex(ObjectId) {
+	if c.User.Id == user.Id {
 		// Don't trust user submitted id... load from session.
 		user.Id = c.User.Id
 		user.Validate(c.Validation)
@@ -106,7 +106,8 @@ func (c User) LoginForm() revel.Result {
 
 func (c User) RegisterForm() revel.Result {
 	action := "/User/SaveNewUser"
-	return c.Render(action)
+	user := models.User{}
+	return c.Render(action, user)
 }
 
 func (c User) Logout() revel.Result {
