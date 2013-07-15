@@ -1,0 +1,43 @@
+{{append . "moreScripts" "select2/select2.min.js"}}
+{{append . "moreScripts" "js/article.js"}}
+{{append . "moreStyles" "select2/select2.css"}}
+<form action="{{.action}}"  id="article-form" method="POST" class="form-horizontal">
+  {{with $field := field "ObjectId" .}}
+    <input type="hidden" id="{{$field.Id}}" name="{{$field.Name}}" value="{{$field.Value}}" />
+  {{end}}
+  {{with $field := field "article.Title" .}}
+    <div class="control-group">
+      <label class="control-label" for="{{$field.Id}}">Title</label>
+      <div class="controls">
+        <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="Title" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}"/>
+        <span class="help-inline error">{{$field.Error}}</span>
+      </div>
+    </div>
+  {{end}}
+
+  {{with $field := field "article.Tags" .}}
+    <div class="control-group">
+      <label class="control-label" for="{{$field.Id}}">Tags</label>
+      <div class="controls">
+        <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="Tags" value="{{if $field.Flash}}{{ range $value := $field.Flash}}{{$value}},{{end}}{{else}}{{ range $value := $field.Value}}{{$value}},{{end}}{{end}}"/>
+        <span class="help-inline">Tags may not contain commas.</span>
+        <span class="help-inline error">{{$field.Error}}</span>
+      </div>
+    </div>
+  {{end}}
+
+  {{with $field := field "article.Body" .}}
+    <div class="control-group">
+      <label class="control-label" for="{{$field.Id}}">Body</label>
+      <div class="controls">
+        <textarea id="{{$field.Id}}" name="{{$field.Name}}" rows="20">{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}</textarea>
+        <span class="help-inline error">{{$field.Error}}</span>
+
+      </div>
+    </div>
+  {{end}}
+
+  <div class="form-actions">
+    <input type="submit" value="{{.actionButton}}" class="btn btn-primary"/>
+  </div>
+</form>

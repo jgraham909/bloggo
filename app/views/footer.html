@@ -1,5 +1,12 @@
 	{{if eq .RunMode "dev"}}
 		{{template "debug.html" .}}
 	{{end}}
+
+    {{range .moreStyles}}
+      <link rel="stylesheet" type="text/css" href="/{{.}}">
+    {{end}}
+    {{range .moreScripts}}
+      <script src="/{{.}}" type="text/javascript" charset="utf-8"></script>
+    {{end}}
   </body>
 </html>
