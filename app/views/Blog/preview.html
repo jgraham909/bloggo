@@ -1,4 +1,4 @@
-<h3><a href="/blog/{{index .Meta "id"}}">{{.Title}}</a></h3>
+<h3><a href="/blog/{{.Id.Hex}}">{{.Title}}</a></h3>
 <span class="label date">{{.Posted}}</span>
 <span class="label author">By:</span> {{index .Meta "author"}}</span>
 {{if .Tags}}

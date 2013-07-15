@@ -1,8 +1,8 @@
 <h1>{{.title}}</h1>
 
 <form action="{{.action}}"  id="user-register" method="POST" class="form-horizontal">
-  {{with $field := field "ObjectId" .}}
-    <input type="hidden" id="{{$field.Id}}" name="{{$field.Name}}" value="{{$field.Value}}" />
+  {{with $field := field "user.Id" .}}
+    <input type="hidden" id="{{$field.Id}}" name="{{$field.Name}}" value="{{$field.Value.Hex}}" />
   {{end}}
 
   {{with $field := field "user.Firstname" .}}

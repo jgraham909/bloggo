@@ -21,9 +21,8 @@ func (c Blog) Index() revel.Result {
 func (c Blog) Add() revel.Result {
 	if c.User != nil {
 		article := models.Article{}
-		ObjectId := bson.ObjectId.Hex(article.Id)
 		action := "/Blog/Create"
-		return c.Render(action, ObjectId, article)
+		return c.Render(action, article)
 	}
 	return c.Forbidden("You must be logged in to create articles.")
 }
@@ -48,7 +47,7 @@ func (c Blog) Create(article *models.Article) revel.Result {
 	return c.Redirect(Application.Index)
 }
 
-func (c Blog) View(id string) revel.Result {
-	article := models.GetArticleById(c.MongoSession, id)
+func (c Blog) View(id bson.ObjectId) revel.Result {
+	article := models.GetArticleByObjectId(c.MongoSession, id)
 	return c.Render(article)
 }
