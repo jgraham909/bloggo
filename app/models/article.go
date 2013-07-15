@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-	"strings"
 	"time"
 )
 
@@ -19,7 +18,7 @@ type Article struct {
 	Posted    time.Time     `bson: "Posted"`
 	Title     string        `bson:"Title"`
 	Body      string        `bson:"Body"`
-	Tags      string        `bson:"Tags"`
+	Tags      []string      `bson:"Tags"`
 	Alias     string        `bson:"Alias"`
 	Meta      map[string]interface{}
 }
@@ -98,8 +97,4 @@ func (article *Article) Save(s *mgo.Session) error {
 		revel.WARN.Printf("Unable to save article: %v error %v", article, err)
 	}
 	return err
-}
-
-func (article *Article) SplitTags() []string {
-	return strings.Split(article.Tags, ",")
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/jgraham909/bloggo/app/models"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo/bson"
+	"strings"
 	"time"
 )
 
@@ -31,6 +32,7 @@ func (c Blog) Add() revel.Result {
 
 func (c Blog) Create(article *models.Article) revel.Result {
 	if c.User != nil {
+		article.Tags = strings.Split(c.Params.Values["article.Tags"][0], ",")
 		article.Validate(c.Validation)
 		if c.Validation.HasErrors() {
 			c.Validation.Keep()
