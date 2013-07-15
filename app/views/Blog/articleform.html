@@ -2,8 +2,8 @@
 {{append . "moreScripts" "js/article.js"}}
 {{append . "moreStyles" "select2/select2.css"}}
 <form action="{{.action}}"  id="article-form" method="POST" class="form-horizontal">
-  {{with $field := field "ObjectId" .}}
-    <input type="hidden" id="{{$field.Id}}" name="{{$field.Name}}" value="{{$field.Value}}" />
+  {{with $field := field "article.Id" .}}
+    <input type="hidden" id="{{$field.Id}}" name="{{$field.Name}}" value="{{$field.Value.Hex}}" />
   {{end}}
   {{with $field := field "article.Title" .}}
     <div class="control-group">
