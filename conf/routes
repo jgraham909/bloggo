@@ -8,6 +8,7 @@ GET     /user/login                             User.LoginForm
 POST    /user/login                             User.Login
 GET		  /user/register							            User.RegisterForm
 GET     /blog                                   Blog.Index
+GET     /blog/add                               Blog.Add
 GET     /blog/:id                               Blog.View
 # Ignore favicon requests
 GET     /favicon.ico                            404
