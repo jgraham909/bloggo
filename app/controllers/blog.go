@@ -23,7 +23,8 @@ func (c Blog) Add() revel.Result {
 		article := models.Article{}
 		ObjectId := bson.ObjectId.Hex(article.Id)
 		action := "/Blog/Create"
-		return c.Render(action, ObjectId, article)
+		actionButton := "Create"
+		return c.Render(action, ObjectId, article, actionButton)
 	}
 	return c.Forbidden("You must be logged in to create articles.")
 }
