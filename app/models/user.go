@@ -64,7 +64,7 @@ func (user *User) Save(s *mgo.Session, p Password) error {
 	if p.Pass != "" {
 		user.HashedPassword, _ = bcrypt.GenerateFromPassword([]byte(p.Pass), bcrypt.DefaultCost)
 	} else {
-		existing := user.GetById(s, user.Id)
+		existing := GetUserById(s, user.Id)
 		if existing.HashedPassword != nil {
 			user.HashedPassword = existing.HashedPassword
 		}
@@ -82,18 +82,17 @@ func (user *User) Delete(s *mgo.Session) error {
 	return err
 }
 
-func (user *User) GetByEmail(s *mgo.Session, Email string) *User {
+func GetUserByEmail(s *mgo.Session, Email string) *User {
 	acct := new(User)
-
-	query := Collection(user, s).Find(bson.M{"Email": Email})
+	query := Collection(acct, s).Find(bson.M{"Email": Email})
 	query.One(acct)
 
 	return acct
 }
 
-func (user *User) GetById(s *mgo.Session, Id bson.ObjectId) *User {
+func GetUserById(s *mgo.Session, Id bson.ObjectId) *User {
 	acct := new(User)
-	query := Collection(user, s).Find(bson.M{"_id": Id})
+	query := Collection(acct, s).Find(bson.M{"_id": Id})
 	err := query.One(acct)
 	if err != nil {
 		revel.WARN.Printf("Unable to load user by Id: %v error %v", Id, err)

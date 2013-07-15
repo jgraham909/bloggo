@@ -16,7 +16,7 @@ type Application struct {
 func (c *Application) Setup() revel.Result {
 	// If there is an active user session load the User data for this user.
 	if email, ok := c.Session["user"]; ok {
-		c.User = c.User.GetByEmail(c.MongoSession, email)
+		c.User = models.GetUserByEmail(c.MongoSession, email)
 		c.RenderArgs["user"] = c.User
 	}
 	return nil

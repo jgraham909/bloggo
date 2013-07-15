@@ -52,7 +52,7 @@ func (c User) SaveExistingUser(user *models.User, password models.Password, Obje
 }
 
 func (c User) SaveNewUser(user *models.User, password models.Password) revel.Result {
-	if exists := user.GetByEmail(c.MongoSession, user.Email); exists.Email == user.Email {
+	if exists := models.GetUserByEmail(c.MongoSession, user.Email); exists.Email == user.Email {
 		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
 		c.Validation.Required(user.Email != exists.Email).
 			Message(msg)
@@ -78,8 +78,7 @@ func (c User) SaveNewUser(user *models.User, password models.Password) revel.Res
 }
 
 func (c User) Login(Email, Password string) revel.Result {
-	user := new(models.User)
-	user = user.GetByEmail(c.MongoSession, Email)
+	user := models.GetUserByEmail(c.MongoSession, Email)
 
 	if user.Email != "" {
 		err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(Password))

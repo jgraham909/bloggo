@@ -52,8 +52,7 @@ func (article *Article) AddMeta(s *mgo.Session) {
 }
 
 func (article *Article) GetAuthor(s *mgo.Session) *User {
-	author := new(User)
-	auth := author.GetById(s, article.Author_id)
+	auth := GetUserById(s, article.Author_id)
 	return auth
 }
 
@@ -65,27 +64,27 @@ func (article *Article) Validate(v *revel.Validation) {
 	)
 }
 
-func (article *Article) GetByTitle(s *mgo.Session, Title string) []Article {
+func GetArticlesByTitle(s *mgo.Session, Title string) []Article {
 	articles := []Article{}
-
+	article := new(Article)
 	query := Collection(article, s).Find(bson.M{"Title": Title})
-	query.One(articles)
+	query.All(articles)
 
 	return articles
 }
 
-func (article *Article) GetById(s *mgo.Session, Id bson.ObjectId) *Article {
+func GetArticleByObjectId(s *mgo.Session, Id bson.ObjectId) *Article {
 	a := new(Article)
 
-	query := Collection(article, s).FindId(Id)
+	query := Collection(a, s).FindId(Id)
 	query.One(a)
 	a.AddMeta(s)
 	return a
 }
 
-func (article *Article) GetByIdString(s *mgo.Session, Id string) *Article {
+func GetArticleById(s *mgo.Session, Id string) *Article {
 	ObjectId := bson.ObjectIdHex(Id)
-	return article.GetById(s, ObjectId)
+	return GetArticleByObjectId(s, ObjectId)
 }
 
 func (article *Article) preSave() {

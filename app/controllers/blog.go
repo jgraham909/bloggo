@@ -49,7 +49,6 @@ func (c Blog) Create(article *models.Article) revel.Result {
 }
 
 func (c Blog) View(id string) revel.Result {
-	article := new(models.Article)
-	article = article.GetByIdString(c.MongoSession, id)
+	article := models.GetArticleById(c.MongoSession, id)
 	return c.Render(article)
 }
