@@ -9,7 +9,7 @@
   </ul>
   <ul class="nav pull-right">
     {{if .user}}
-      <li><a href="{{url "User.Index"}}">{{.user.Firstname}} {{.user.Lastname}}</a></li>
+      <li><a href="{{url "User.Index"}}"><i class="icon-user icon-white"></i> {{.user.Firstname}} {{.user.Lastname}}</a></li>
       <li><a href="{{url "User.Logout"}}">Logout</a></li>
     {{else}}
       <li><a href="{{url "User.Login"}}">Login</a></li>
