@@ -85,10 +85,6 @@ func GetArticlesByDate(s *mgo.Session, limit int) []*Article {
 	return articles
 }
 
-func (article *Article) preSave() {
-
-}
-
 func (article *Article) Save(s *mgo.Session) error {
 	coll := Collection(article, s)
 	_, err := coll.Upsert(bson.M{"_id": article.Id}, article)
