@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
+	"strings"
 )
 
 func init() {
@@ -21,7 +22,7 @@ func init() {
 		revel.ActionInvoker,           // Invoke the action.
 	}
 
-	revel.TemplateFuncs["nil"] = func(a interface{}) bool {
-		return a == nil
+	revel.TemplateFuncs["join"] = func(a []string, sep string) string {
+		return strings.Join(a, sep)
 	}
 }

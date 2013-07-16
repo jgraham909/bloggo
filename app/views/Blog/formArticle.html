@@ -19,7 +19,7 @@
     <div class="control-group">
       <label class="control-label" for="{{$field.Id}}">Tags</label>
       <div class="controls">
-        <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="Tags" value="{{if $field.Flash}}{{ range $value := $field.Flash}}{{$value}},{{end}}{{else}}{{ range $value := $field.Value}}{{$value}},{{end}}{{end}}"/>
+        <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="Tags" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{join $field.Value ", "}}{{end}}"/>
         <span class="help-inline">Tags may not contain commas.</span>
         <span class="help-inline error">{{$field.Error}}</span>
       </div>

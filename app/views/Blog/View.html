@@ -2,6 +2,10 @@
 {{template "header.html" .}}
 
 <h1>{{.article.Title}}</h1>
+<div class="btn-group">
+  <!-- @todo provide abstraction or js callback for ops links -->
+  <a href="/blog/{{.article.Id.Hex}}/edit" class="btn"><i class="icon-edit"></i> Edit</a>
+</div>
 <span class="label date">{{.article.Posted}}</span>
 <span class="label author">By:</span> {{index .article.Meta "author"}}</span>
 <span class="label tags">Tags:</span>

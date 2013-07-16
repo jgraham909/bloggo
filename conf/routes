@@ -11,6 +11,7 @@ GET		  /user/register							            User.RegisterForm
 GET     /blog                                   Blog.Index
 GET     /blog/add                               Blog.Add
 GET     /blog/:id                               Blog.View
+GET     /blog/:id/edit                          Blog.Edit
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

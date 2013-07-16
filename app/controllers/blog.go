@@ -52,3 +52,42 @@ func (c Blog) View(id bson.ObjectId) revel.Result {
 	article := models.GetArticleByObjectId(c.MongoSession, id)
 	return c.Render(article)
 }
+
+func (c Blog) Edit(id bson.ObjectId) revel.Result {
+	if c.User != nil {
+		article := models.GetArticleByObjectId(c.MongoSession, id)
+		if article.CanEdit(c.User) {
+			action := "/Blog/Update"
+			actionButton := "Update"
+			return c.Render(action, article, actionButton)
+		}
+		return c.Forbidden("You do not have permission to edit this resource.")
+	}
+	return c.Redirect(User.Login)
+}
+
+func (c Blog) Update(article *models.Article) revel.Result {
+	if c.User != nil {
+		check := models.GetArticleByObjectId(c.MongoSession, article.Id)
+		if check.CanEdit(c.User) {
+			article.Tags = strings.Split(c.Params.Values["article.Tags"][0], ",")
+			article.Validate(c.Validation)
+			if c.Validation.HasErrors() {
+				c.Validation.Keep()
+				c.FlashParams()
+				c.Flash.Error("Please correct the errors below.")
+				return c.Redirect("/blog/%s/edit", article.Id.Hex())
+			}
+
+			// @todo properly implement this
+			article.Author_id = check.Author_id
+			article.Published = check.Published
+			article.Posted = check.Posted
+
+			article.Save(c.MongoSession)
+			return c.Redirect("/blog/%s", article.Id.Hex())
+		}
+		return c.Forbidden("You do not have permission to edit this resource.")
+	}
+	return c.Redirect(User.Login)
+}

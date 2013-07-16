@@ -93,3 +93,10 @@ func (article *Article) Save(s *mgo.Session) error {
 	}
 	return err
 }
+
+func (article *Article) CanEdit(u *User) bool {
+	if u.Id == article.Author_id {
+		return true
+	}
+	return false
+}
