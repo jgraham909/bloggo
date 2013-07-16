@@ -9,12 +9,12 @@
   </ul>
   <ul class="nav pull-right">
     {{if .user}}
-      <li><a href="/User/Index">{{.user.Firstname}} {{.user.Lastname}}</a></li>
-      <li><a href="/user/logout">Logout</a></li>
+      <li><a href="{{url "User.Index"}}">{{.user.Firstname}} {{.user.Lastname}}</a></li>
+      <li><a href="{{url "User.Logout"}}">Logout</a></li>
     {{else}}
-      <li><a href="/user/login">Login</a></li>
+      <li><a href="{{url "User.Login"}}">Login</a></li>
       <li class="divider-vertical"></li>
-      <li><a href="/user/register">Register</a></li>
+      <li><a href="{{url "User.RegisterForm"}}">Register</a></li>
     {{end}}
   </ul>
 </div>

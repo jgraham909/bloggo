@@ -3,6 +3,7 @@
 # ~~~~
 
 GET     /                                       Application.Index
+GET     /user/index                             User.Index
 GET     /user/logout                            User.Logout
 GET     /user/login                             User.LoginForm
 POST    /user/login                             User.Login
