@@ -13,9 +13,7 @@ type Blog struct {
 }
 
 func (c Blog) Index() revel.Result {
-	article := new(models.Article)
-	articles := article.All(c.MongoSession)
-
+	articles := models.GetArticlesByDate(c.MongoSession, 10)
 	return c.Render(articles)
 }
 

@@ -23,18 +23,6 @@ type Article struct {
 	Meta      map[string]interface{}
 }
 
-func (article *Article) All(s *mgo.Session) []*Article {
-	articles := []*Article{}
-
-	query := Collection(article, s).Find(nil).Sort("-Published").Limit(10)
-	query.All(&articles)
-
-	for _, a := range articles {
-		a.AddMeta(s)
-	}
-	return articles
-}
-
 func (article *Article) AddMeta(s *mgo.Session) {
 	if article.Meta == nil {
 		article.Meta = make(map[string]interface{})
@@ -84,6 +72,18 @@ func GetArticleByObjectId(s *mgo.Session, Id bson.ObjectId) *Article {
 func GetArticleById(s *mgo.Session, Id string) *Article {
 	ObjectId := bson.ObjectIdHex(Id)
 	return GetArticleByObjectId(s, ObjectId)
+}
+
+func GetArticlesByDate(s *mgo.Session, limit int) []*Article {
+	articles := []*Article{}
+	a := new(Article)
+	query := Collection(a, s).Find(nil).Sort("-Published").Limit(limit)
+	query.All(&articles)
+
+	for _, a := range articles {
+		a.AddMeta(s)
+	}
+	return articles
 }
 
 func (article *Article) preSave() {
