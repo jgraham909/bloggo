@@ -1,26 +1,5 @@
 {{set . "title" "Login"}}
 {{template "header.html" .}}
-
 <h1>Login</h1>
-
-<form action="{{url "User.Login"}}"  id="user-login" method="POST" class="form-horizontal">
-  <div class="control-group">
-    <label class="control-label">Email Address</label>
-    <div class="controls">
-      <input type="text" name="Email" placeholder="email address" value="{{.flash.Email}}" />
-    </div>
-  </div>
-
-  <div class="control-group">
-    <label class="control-label">Password</label>
-    <div class="controls">
-      <input type="password" name="Password" placeholder="password" />
-    </div>
-  </div>
-
-  <div class="form-actions">
-    <input type="submit" value="Login" class="btn btn-primary"/>
-  </div>
-</form>
-
+{{template "User/formLogin.html"}}
 {{template "footer.html" .}}
