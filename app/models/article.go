@@ -35,7 +35,6 @@ func (article *Article) AddMeta(s *mgo.Session) {
 	} else {
 		article.Meta["teaser"] = template.HTML(string(blackfriday.MarkdownBasic([]byte(article.Body[0:len(article.Body)]))))
 	}
-	article.Meta["id"] = article.Id.Hex()
 }
 
 func (article *Article) GetAuthor(s *mgo.Session) *User {
