@@ -3,6 +3,6 @@
 <span class="label author">By:</span><span> {{index .Meta "author"}}</span>
 {{if .Tags}}
 <span class="label tags">Tags:</span>
-{{ range $value := .Tags}}<span class="label secondary">{{$value}}</span> {{end}}
+{{ range $value := .Tags}}<a href="{{url "Blog.Tag" $value}}"><span class="label secondary">{{$value}}</span></a> {{end}}
 {{end}}
 <p>{{index .Meta "teaser"}}</p>

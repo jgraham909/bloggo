@@ -17,6 +17,11 @@ func (c Blog) Index() revel.Result {
 	return c.Render(articles)
 }
 
+func (c Blog) Tag(t string) revel.Result {
+	articles := models.GetArticlesByTag(c.MongoSession, t)
+	return c.Render(articles)
+}
+
 func (c Blog) Add() revel.Result {
 	if c.User != nil {
 		article := models.Article{}

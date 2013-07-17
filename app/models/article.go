@@ -85,6 +85,18 @@ func GetArticlesByDate(s *mgo.Session, limit int) []*Article {
 	return articles
 }
 
+func GetArticlesByTag(s *mgo.Session, t string) []*Article {
+	articles := []*Article{}
+	a := new(Article)
+	query := Collection(a, s).Find(bson.M{"Tags": t})
+	query.All(&articles)
+
+	for _, a := range articles {
+		a.AddMeta(s)
+	}
+	return articles
+}
+
 func (article *Article) Save(s *mgo.Session) error {
 	coll := Collection(article, s)
 	_, err := coll.Upsert(bson.M{"_id": article.Id}, article)
