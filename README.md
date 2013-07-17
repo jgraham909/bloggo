@@ -26,10 +26,18 @@ eg.
 ## TODO/Roadmap 
 
 *   Article CRUD
-    * Split comma-separated tags as individual tags on save, remap to comma-sep on update.
-    * Update
+    * Update: Needs some UI/UX cleanup for when the link is (not) displayed, currently it is always displayed.
     * Delete
-* View by tags
+* UI cleanup
+* User Management
+    * Manage creation of accounts
+    * Reset Password
+    * Locale
+    * Timezone
+* Code Review & Refactoring
+    * Rework any flakey abstractions
+    * Determine how code can be better re-used.
+        * Template helper functions
+        * App config for date formatting
+* Internationalization show examples of UI/UX changing based on user settings
 * Search
-* Aliases
-* [hallo.js](http://hallojs.org/ "inline editing")(?)
