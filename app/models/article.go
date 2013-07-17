@@ -106,6 +106,15 @@ func (article *Article) Save(s *mgo.Session) error {
 	return err
 }
 
+func (article *Article) Delete(s *mgo.Session) error {
+	coll := Collection(article, s)
+	err := coll.RemoveId(article.Id)
+	if err != nil {
+		revel.WARN.Printf("Undable to delete article: %v error %v", article, err)
+	}
+	return err
+}
+
 func (article *Article) CanEdit(u *User) bool {
 	if u.Id == article.Author_id {
 		return true

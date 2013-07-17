@@ -22,6 +22,27 @@ func (c Blog) Tag(t string) revel.Result {
 	return c.Render(articles)
 }
 
+func (c Blog) DeleteConfirm(id bson.ObjectId) revel.Result {
+	if c.User != nil {
+		article := models.GetArticleByObjectId(c.MongoSession, id)
+		if article.CanEdit(c.User) {
+			return c.Render(article)
+		}
+		return c.Forbidden("You do not have permission to delete this resource.")
+	}
+	return c.Forbidden("Only site users may delete content.")
+}
+
+func (c Blog) Delete(id bson.ObjectId) revel.Result {
+	if c.User != nil {
+		article := models.GetArticleByObjectId(c.MongoSession, id)
+		if article.CanEdit(c.User) {
+			article.Delete(c.MongoSession)
+		}
+	}
+	return c.Redirect(Application.Index)
+}
+
 func (c Blog) EditLinks(id bson.ObjectId) revel.Result {
 	canEdit := false
 	article := &models.Article{}

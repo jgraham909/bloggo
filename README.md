@@ -25,8 +25,6 @@ eg.
 
 ## TODO/Roadmap
 
-*   Article CRUD
-    * Delete
 * UI cleanup
 * User Management
     * Manage creation of accounts
