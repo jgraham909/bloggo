@@ -18,15 +18,14 @@ The database is configurable via the app.conf directive `bloggo.db` if you do no
 Revel models correspond to mongo collections. By default the collection name defaults to the model name eg. Article uses the "Article" collection in mongodb. If you want to store the model data in a different collection use the following config one per model type.
 
     bloggo.db.collection.MODEL_NAME = "COLLECTION_NAME"
-    
+
 eg.
 
     bloggo.db.collection.Articles = "articles"
 
-## TODO/Roadmap 
+## TODO/Roadmap
 
 *   Article CRUD
-    * Update: Needs some UI/UX cleanup for when the link is (not) displayed, currently it is always displayed.
     * Delete
 * UI cleanup
 * User Management

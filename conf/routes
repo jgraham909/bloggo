@@ -12,6 +12,7 @@ GET     /blog                                   Blog.Index
 GET     /blog/add                               Blog.Add
 GET     /blog/:id                               Blog.View
 GET     /blog/:id/edit                          Blog.Edit
+GET     /blog/:id/links                         Blog.EditLinks
 GET     /blog/tag/:t                            Blog.Tag
 # Ignore favicon requests
 GET     /favicon.ico                            404

@@ -22,6 +22,18 @@ func (c Blog) Tag(t string) revel.Result {
 	return c.Render(articles)
 }
 
+func (c Blog) EditLinks(id bson.ObjectId) revel.Result {
+	canEdit := false
+	article := &models.Article{}
+	if c.User != nil {
+		article = models.GetArticleByObjectId(c.MongoSession, id)
+		if article.CanEdit(c.User) {
+			canEdit = true
+		}
+	}
+	return c.Render(canEdit, article)
+}
+
 func (c Blog) Add() revel.Result {
 	if c.User != nil {
 		article := models.Article{}
