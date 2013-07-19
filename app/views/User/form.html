@@ -1,5 +1,3 @@
-<h1>{{.title}}</h1>
-
 <form action="{{.action}}"  id="user-register" method="POST" class="form-horizontal">
   {{with $field := field "user.Id" .}}
     <input type="hidden" id="{{$field.Id}}" name="{{$field.Name}}" value="{{$field.Value.Hex}}" />
@@ -9,7 +7,7 @@
     <div class="control-group">
     <label class="control-label" for="{{$field.Id}}">First Name</label>
     <div class="controls">
-      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="firstname" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}"/>
+      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="firstname" value="{{or $field.Flash $field.Value}}"/>
       <span class="help-inline error">{{$field.Error}}</span>
 
     </div>
@@ -20,7 +18,7 @@
     <div class="control-group">
     <label class="control-label" for="{{$field.Id}}">Last Name</label>
     <div class="controls">
-      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="lastname" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}"/>
+      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="lastname" value="{{or $field.Flash $field.Value}}"/>
       <span class="help-inline error">{{$field.Error}}</span>
 
     </div>
@@ -31,7 +29,7 @@
     <div class="control-group">
     <label class="control-label" for="{{$field.Id}}">Email</label>
     <div class="controls">
-      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="email" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$field.Value}}{{end}}"/>
+      <input type="text" id="{{$field.Id}}" name="{{$field.Name}}" placeholder="email" value="{{or $field.Flash $field.Value}}"/>
       <span class="help-inline error">{{$field.Error}}</span>
 
     </div>

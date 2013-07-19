@@ -1,6 +1,6 @@
 {{if .articles}}
   {{range $article := .articles}}
-    {{template "Blog/preview.html" $article}}
+    {{template "Blog/viewTeaser.html" $article}}
   {{end}}
 {{else}}
   {{template "Blog/no-results.html"}}

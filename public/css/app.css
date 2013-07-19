@@ -6,9 +6,30 @@
 	float: left;
 }
 
+
 #content {
 	margin-top: 45px;	/* accommodate the fixed navbar */
 	padding-top: 10px;
 	clear: both;
 }
 
+article {
+  margin: 10px;
+  padding: 5px;
+  background-color: #eee;
+}
+
+.tags > a {
+  margin: 1px;
+}
+
+.links {
+  float: right;
+}
+
+.delete-warning {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+
+}

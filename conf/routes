@@ -3,19 +3,31 @@
 # ~~~~
 
 GET     /                                       Application.Index
-GET     /user/index                             User.Index
-GET     /user/logout                            User.Logout
-GET     /user/login                             User.LoginForm
-POST    /user/login                             User.Login
-GET		  /user/register							            User.RegisterForm
+POST    /Preview                                Application.Preview
+
+GET     /user/login                             User.GetLogin
+POST    /user/login                             User.PostLogin
+GET     /user/logout                            User.GetLogout
+
+GET     /user/create                            User.GetCreate
+POST    /user/create                            User.PostCreate
+GET     /user/:id                               User.GetRead
+GET     /user/:id/update                        User.GetUpdate
+POST    /user/:id                               User.PostUpdate
+GET     /user/:id/delete                        User.GetDelete
+DELETE  /user/:id                               User.Delete
+
 GET     /blog                                   Blog.Index
-GET     /blog/add                               Blog.Add
-GET     /blog/:id                               Blog.View
-GET     /blog/:id/edit                          Blog.Edit
-GET     /blog/:id/links                         Blog.EditLinks
-GET     /blog/:id/deleteConfirm                 Blog.DeleteConfirm
-GET     /blog/:id/delete                        Blog.Delete
-GET     /blog/tag/:t                            Blog.Tag
+GET     /blog/create                            Blog.GetCreate
+POST    /blog/create                            Blog.PostCreate
+GET     /blog/:id                               Blog.GetRead
+GET     /blog/:id/update                        Blog.GetUpdate
+GET     /blog/:id/delete                        Blog.GetDelete
+GET     /blog/:id/links                         Blog.Links
+DELETE  /blog/:id                               Blog.Delete
+
+GET     /blog/tag/:tag                          Blog.Tag
+
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

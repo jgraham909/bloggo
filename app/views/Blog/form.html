@@ -41,3 +41,28 @@
     <input type="submit" value="{{.actionButton}}" class="btn btn-primary"/>
   </div>
 </form>
+
+
+<div id="body-preview" class="preview">
+<h2>Preview</h2>
+<div id="preview-content">
+</div>
+</div>
+<script>
+  // Sets markdown preview content
+  $(function () {
+    var body = $('#article_Body');
+    var preview = $('#preview-content');
+
+    body.keyup(function() {
+      s = new Object;
+      s.text = body.val();
+      preview.load('/Preview', s);
+    });
+
+    // Load a preview in case we have text.
+    body.keyup();
+  });
+
+</script>
+

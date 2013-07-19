@@ -9,6 +9,7 @@ import (
 )
 
 type User struct {
+	Model
 	Id             bson.ObjectId `bson:"_id,omitempty"`
 	Firstname      string        `bson:"Firstname"`
 	Lastname       string        `bson:"Lastname"`
@@ -64,7 +65,7 @@ func (user *User) Save(s *mgo.Session, p Password) error {
 	if p.Pass != "" {
 		user.HashedPassword, _ = bcrypt.GenerateFromPassword([]byte(p.Pass), bcrypt.DefaultCost)
 	} else {
-		existing := GetUserById(s, user.Id)
+		existing := GetUserByObjectId(s, user.Id)
 		if existing.HashedPassword != nil {
 			user.HashedPassword = existing.HashedPassword
 		}
@@ -90,12 +91,49 @@ func GetUserByEmail(s *mgo.Session, Email string) *User {
 	return acct
 }
 
-func GetUserById(s *mgo.Session, Id bson.ObjectId) *User {
-	acct := new(User)
-	query := Collection(acct, s).Find(bson.M{"_id": Id})
-	err := query.One(acct)
-	if err != nil {
-		revel.WARN.Printf("Unable to load user by Id: %v error %v", Id, err)
+func GetUserByObjectId(s *mgo.Session, Id bson.ObjectId) *User {
+	u := new(User)
+	query := Collection(u, s).FindId(Id)
+	query.One(u)
+	return u
+}
+
+func (user *User) CanBeCreatedBy(s *mgo.Session, u *User) bool {
+	// Only admin can create, set via app.conf:bloggo.admin hex value
+	if a, found := revel.Config.String("bloggo.admin"); found {
+		if bson.IsObjectIdHex(a) && a == u.Id.Hex() {
+			return true
+		}
 	}
-	return acct
+	return false
+}
+
+func (user *User) CanBeReadBy(s *mgo.Session, u *User) bool {
+	// Default everybody can read.
+	return true
+}
+
+func (user *User) CanBeDeletedBy(s *mgo.Session, u *User) bool {
+	// Only admin can create, set via app.conf:bloggo.admin hex value
+	if a, found := revel.Config.String("bloggo.admin"); found {
+		if bson.IsObjectIdHex(a) && a == u.Id.Hex() {
+			return true
+		}
+	}
+	return false
+}
+
+func (user *User) CanBeUpdatedBy(s *mgo.Session, u *User) bool {
+	// Only admin can create, set via app.conf:bloggo.admin hex value
+	if a, found := revel.Config.String("bloggo.admin"); found {
+		if bson.IsObjectIdHex(a) && a == u.Id.Hex() {
+			return true
+		}
+	}
+
+	// User's can edit their own account
+	if user.Id == u.Id {
+		return true
+	}
+	return false
 }

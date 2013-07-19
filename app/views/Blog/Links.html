@@ -1,0 +1,9 @@
+{{if .links}}
+<div class="btn-group">
+  <a class="btn btn-primary" href="#" data-toggle="dropdown"><i class="icon-cog icon-white"></i> Actions<span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      {{if .canUpdate}}<li><a href="/blog/{{.article.Id.Hex}}/update"><i class="icon-edit"></i> Edit</a></li>{{end}}
+      {{if .canDelete}}<li><a href="/blog/{{.article.Id.Hex}}/delete"><i class="icon-remove"></i> Delete</a></li>{{end}}
+    </ul>
+</div>
+{{end}}

@@ -1,0 +1,18 @@
+<article>
+<h1><a href="/blog/{{.Id.Hex}}">{{.Title}}</a></h1>
+<div class="meta">
+  <span id="edit-links-{{.Id.Hex}}" class="links">
+  <script>
+    // Loads the action links for this user. Allows this page to be cached the
+    // same for all users.
+    $('#edit-links-{{.Id.Hex}}').load('/blog/{{.Id.Hex}}/links');
+  </script>
+</span>
+  <div class="author"><a href="/user/{{index .Meta "author_id"}}"><abbr title="author"><i class="icon-user"></i></abbr> {{index .Meta "author"}}</a></div>
+  <div class="date"><abbr title="date posted"><i class="icon-calendar"></i></abbr> {{.Posted.Format "2006 Jan 02"}}</div>
+  <div class="tags"><abbr title="tags"><i class="icon-tags"></i></abbr>
+  {{ range $value := .Tags}}<a class="btn btn-info btn-small" href="{{url "Blog.Tag" $value}}"><i class="icon-tag icon-white"></i> {{$value}}</a>  {{end}}
+  </div>
+</div>
+<p class="read-more">{{index .Meta "teaser"}}<a class="btn" href="/blog/{{.Id.Hex}}">Read More</a></p>
+</article>

@@ -1,0 +1,20 @@
+{{template "header.html" .}}
+<h1>{{.title}}</h1>
+<div class="delete-warning">
+You are about to delete <b>{{.article.Title}}</b> this action cannot be undone.
+<a href="#" id="delete" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete</a>
+<script>
+  s = {
+    url: "/blog/{{.article.Id.Hex}}",
+    type: "DELETE",
+    data: {
+      id: {{.article.Id.Hex}},
+    }
+  }
+  $('#delete').click(function() {
+    $.ajax(s).success(function() { window.location.replace("/blog")} )
+  });
+</script>
+</div>
+{{template "footer.html" .}}
+

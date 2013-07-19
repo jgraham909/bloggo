@@ -17,15 +17,15 @@ func (c Blog) Index() revel.Result {
 	return c.Render(articles)
 }
 
-func (c Blog) Tag(t string) revel.Result {
-	articles := models.GetArticlesByTag(c.MongoSession, t)
-	return c.Render(articles)
+func (c Blog) Tag(tag string) revel.Result {
+	articles := models.GetArticlesByTag(c.MongoSession, tag)
+	return c.Render(articles, tag)
 }
 
-func (c Blog) DeleteConfirm(id bson.ObjectId) revel.Result {
+func (c Blog) GetDelete(id bson.ObjectId) revel.Result {
 	if c.User != nil {
 		article := models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanEdit(c.User) {
+		if article.CanBeDeletedBy(c.MongoSession, c.User) {
 			return c.Render(article)
 		}
 		return c.Forbidden("You do not have permission to delete this resource.")
@@ -36,36 +36,43 @@ func (c Blog) DeleteConfirm(id bson.ObjectId) revel.Result {
 func (c Blog) Delete(id bson.ObjectId) revel.Result {
 	if c.User != nil {
 		article := models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanEdit(c.User) {
+		if article.CanBeDeletedBy(c.MongoSession, c.User) {
 			article.Delete(c.MongoSession)
 		}
 	}
-	return c.Redirect(Application.Index)
+	return c.RenderText("")
 }
 
-func (c Blog) EditLinks(id bson.ObjectId) revel.Result {
-	canEdit := false
+func (c Blog) Links(id bson.ObjectId) revel.Result {
+	links := false
+	canUpdate := false
+	canDelete := false
 	article := &models.Article{}
 	if c.User != nil {
 		article = models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanEdit(c.User) {
-			canEdit = true
+		if article.CanBeUpdatedBy(c.MongoSession, c.User) {
+			canUpdate = true
+			links = true
+		}
+		if article.CanBeDeletedBy(c.MongoSession, c.User) {
+			canDelete = true
+			links = true
 		}
 	}
-	return c.Render(canEdit, article)
+	return c.Render(article, links, canUpdate, canDelete)
 }
 
-func (c Blog) Add() revel.Result {
+func (c Blog) GetCreate() revel.Result {
 	if c.User != nil {
 		article := models.Article{}
-		action := "/Blog/Create"
+		action := "/blog/create"
 		actionButton := "Create"
 		return c.Render(action, article, actionButton)
 	}
 	return c.Forbidden("You must be logged in to create articles.")
 }
 
-func (c Blog) Create(article *models.Article) revel.Result {
+func (c Blog) PostCreate(article *models.Article) revel.Result {
 	if c.User != nil {
 		article.Tags = strings.Split(c.Params.Values["article.Tags"][0], ",")
 		article.Validate(c.Validation)
@@ -73,7 +80,7 @@ func (c Blog) Create(article *models.Article) revel.Result {
 			c.Validation.Keep()
 			c.FlashParams()
 			c.Flash.Error("Please correct the errors below.")
-			return c.Redirect(Blog.Add)
+			return c.Redirect(Blog.GetCreate)
 		}
 
 		// Set calculated fields
@@ -86,28 +93,31 @@ func (c Blog) Create(article *models.Article) revel.Result {
 	return c.Redirect(Application.Index)
 }
 
-func (c Blog) View(id bson.ObjectId) revel.Result {
-	article := models.GetArticleByObjectId(c.MongoSession, id)
-	return c.Render(article)
+func (c Blog) GetRead(id bson.ObjectId) revel.Result {
+	if id.Hex() != "" {
+		article := models.GetArticleByObjectId(c.MongoSession, id)
+		return c.Render(article)
+	}
+	return c.NotFound("Invalid article Id.")
 }
 
-func (c Blog) Edit(id bson.ObjectId) revel.Result {
+func (c Blog) GetUpdate(id bson.ObjectId) revel.Result {
 	if c.User != nil {
 		article := models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanEdit(c.User) {
+		if article.CanBeUpdatedBy(c.MongoSession, c.User) {
 			action := "/Blog/Update"
 			actionButton := "Update"
 			return c.Render(action, article, actionButton)
 		}
 		return c.Forbidden("You do not have permission to edit this resource.")
 	}
-	return c.Redirect(User.Login)
+	return c.Redirect(User.GetLogin)
 }
 
 func (c Blog) Update(article *models.Article) revel.Result {
 	if c.User != nil {
 		check := models.GetArticleByObjectId(c.MongoSession, article.Id)
-		if check.CanEdit(c.User) {
+		if check.CanBeUpdatedBy(c.MongoSession, c.User) {
 			article.Tags = strings.Split(c.Params.Values["article.Tags"][0], ",")
 			article.Validate(c.Validation)
 			if c.Validation.HasErrors() {
@@ -127,5 +137,5 @@ func (c Blog) Update(article *models.Article) revel.Result {
 		}
 		return c.Forbidden("You do not have permission to edit this resource.")
 	}
-	return c.Redirect(User.Login)
+	return c.Redirect(User.GetLogin)
 }

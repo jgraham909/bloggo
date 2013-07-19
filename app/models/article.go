@@ -12,6 +12,7 @@ import (
 const trimLength = 300
 
 type Article struct {
+	Model
 	Id        bson.ObjectId `bson:"_id,omitempty"`
 	Author_id bson.ObjectId `bson:"Author_id"`
 	Published bool          `bson:"Published"`
@@ -27,7 +28,9 @@ func (article *Article) AddMeta(s *mgo.Session) {
 	if article.Meta == nil {
 		article.Meta = make(map[string]interface{})
 	}
-	article.Meta["author"] = article.GetAuthor(s).String()
+	auth := article.GetAuthor(s)
+	article.Meta["author"] = auth
+	article.Meta["author_id"] = auth.Id.Hex()
 	article.Meta["markdown"] = template.HTML(string(blackfriday.MarkdownBasic([]byte(article.Body))))
 
 	if len(article.Body) > trimLength {
@@ -38,7 +41,7 @@ func (article *Article) AddMeta(s *mgo.Session) {
 }
 
 func (article *Article) GetAuthor(s *mgo.Session) *User {
-	auth := GetUserById(s, article.Author_id)
+	auth := GetUserByObjectId(s, article.Author_id)
 	return auth
 }
 
@@ -76,7 +79,7 @@ func GetArticleById(s *mgo.Session, Id string) *Article {
 func GetArticlesByDate(s *mgo.Session, limit int) []*Article {
 	articles := []*Article{}
 	a := new(Article)
-	query := Collection(a, s).Find(nil).Sort("-Published").Limit(limit)
+	query := Collection(a, s).Find(nil).Sort("{'Published': 1}").Limit(limit)
 	query.All(&articles)
 
 	for _, a := range articles {
@@ -115,9 +118,13 @@ func (article *Article) Delete(s *mgo.Session) error {
 	return err
 }
 
-func (article *Article) CanEdit(u *User) bool {
+func (article *Article) CanBeUpdatedBy(s *mgo.Session, u *User) bool {
 	if u.Id == article.Author_id {
 		return true
 	}
 	return false
+}
+
+func (article *Article) CanBeDeletedBy(s *mgo.Session, u *User) bool {
+	return article.CanBeUpdatedBy(s, u)
 }
