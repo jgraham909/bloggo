@@ -128,3 +128,11 @@ func (article *Article) CanBeUpdatedBy(s *mgo.Session, u *User) bool {
 func (article *Article) CanBeDeletedBy(s *mgo.Session, u *User) bool {
 	return article.CanBeUpdatedBy(s, u)
 }
+
+func (article *Article) CanBeCreatedBy(s *mgo.Session, u *User) bool {
+	// All valid users can create articles
+	if u != nil {
+		return u.Id.Valid()
+	}
+	return false
+}

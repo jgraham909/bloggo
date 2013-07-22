@@ -13,15 +13,15 @@ import (
 type Application struct {
 	*revel.Controller
 	revmgo.MongoController
-	User *models.User
+	ActiveUser *models.User
 }
 
 // Responsible for doing any necessary setup for each web request.
 func (c *Application) Setup() revel.Result {
 	// If there is an active user session load the User data for this user.
 	if email, ok := c.Session["user"]; ok {
-		c.User = models.GetUserByEmail(c.MongoSession, email)
-		c.RenderArgs["user"] = c.User
+		c.ActiveUser = models.GetUserByEmail(c.MongoSession, email)
+		c.RenderArgs["ActiveUser"] = c.ActiveUser
 	}
 
 	dummyContent()
@@ -43,6 +43,25 @@ func (c Application) Preview(text string) revel.Result {
 	preview := template.HTML(string(blackfriday.MarkdownBasic([]byte(text))))
 	return c.Render(preview)
 
+}
+
+func (c Application) NavLeft() revel.Result {
+	UserCreate := c.ActiveUser.CanBeCreatedBy(c.MongoSession, c.ActiveUser)
+
+	article := new(models.Article)
+	ArticleCreate := article.CanBeCreatedBy(c.MongoSession, c.ActiveUser)
+	return c.Render(UserCreate, ArticleCreate)
+}
+
+func (c Application) NavRight() revel.Result {
+	UserUpdate, UserLogout, UserLogin := false, false, true
+	if c.ActiveUser != nil {
+		UserUpdate = c.ActiveUser.CanBeUpdatedBy(c.MongoSession, c.ActiveUser)
+		UserLogout = c.ActiveUser.Id.Valid()
+		UserLogin = !c.ActiveUser.Id.Valid()
+	}
+
+	return c.Render(UserUpdate, UserLogout, UserLogin)
 }
 
 // Load dummy content if the jane account doesn't exist.

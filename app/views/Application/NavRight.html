@@ -1,0 +1,4 @@
+{{if .UserUpdate}}<li><a href="/user/{{.ActiveUser.Id.Hex}}/update"><i class="icon-user icon-white"></i> {{.ActiveUser.Firstname}} {{.ActiveUser.Lastname}}</a></li>{{end}}
+{{if .UserLogout}}<li><a href="{{url "User.GetLogout"}}"><i class="icon-off icon-white"></i> Logout</a></li>{{end}}
+{{if .UserLogin}}<li><a href="{{url "User.GetLogin"}}"><i class="icon-user icon-white"></i> Login</a></li>{{end}}
+

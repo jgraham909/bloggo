@@ -1,20 +1,15 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
 <div class="navbar-inner">
   <a class="brand" href="{{url "Application.Index"}}" {{if eq .Controller.Type "Application.Index"}}class="active"{{end}}><i class="icon-home icon-white"></i> Bloggo</a>
-  <ul class="nav">
-      {{if .user.Id}}
-      <li><a href="/blog/create"><i class="icon-pencil icon-white"></i> Create Article</a></li>
-      {{end}}
+  <ul id="nav-left" class="nav">
+    <script>
+      $('#nav-left').load('/Application/NavLeft');
+    </script>
   </ul>
-  <ul class="nav pull-right">
-    {{if .user.Id}}
-      <li><a href="/user/{{.user.Id.Hex}}/update"><i class="icon-user icon-white"></i> {{.user.Firstname}} {{.user.Lastname}}</a></li>
-      <li><a href="{{url "User.GetLogout"}}"><i class="icon-off icon-white"></i> Logout</a></li>
-    {{else}}
-      <li><a href="{{url "User.GetLogin"}}"><i class="icon-user icon-white"></i> Login</a></li>
-      <li class="divider-vertical"></li>
-      <li><a href="{{url "User.GetCreate"}}">Register</a></li>
-    {{end}}
+  <ul id="nav-right" class="nav pull-right">
+    <script>
+      $('#nav-right').load('/Application/NavRight');
+    </script>
   </ul>
 </div>
 </div>

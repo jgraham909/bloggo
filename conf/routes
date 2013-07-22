@@ -28,6 +28,9 @@ DELETE  /blog/:id                               Blog.Delete
 
 GET     /blog/tag/:tag                          Blog.Tag
 
+GET     /Application/NavLeft                    Application.NavLeft
+GET     /Application/NavRight                   Application.NavRight
+
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

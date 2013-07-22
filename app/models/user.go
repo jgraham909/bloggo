@@ -99,8 +99,12 @@ func GetUserByObjectId(s *mgo.Session, Id bson.ObjectId) *User {
 }
 
 func (user *User) CanBeCreatedBy(s *mgo.Session, u *User) bool {
+	if u == nil {
+		return false
+	}
+
 	// Only admin can create, set via app.conf:bloggo.admin hex value
-	if a, found := revel.Config.String("bloggo.admin"); found {
+	if a, found := revel.Config.String("bloggo.admin"); found && u != nil {
 		if bson.IsObjectIdHex(a) && a == u.Id.Hex() {
 			return true
 		}
@@ -124,6 +128,9 @@ func (user *User) CanBeDeletedBy(s *mgo.Session, u *User) bool {
 }
 
 func (user *User) CanBeUpdatedBy(s *mgo.Session, u *User) bool {
+	if u == nil {
+		return false
+	}
 	// Only admin can create, set via app.conf:bloggo.admin hex value
 	if a, found := revel.Config.String("bloggo.admin"); found {
 		if bson.IsObjectIdHex(a) && a == u.Id.Hex() {

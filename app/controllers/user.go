@@ -13,19 +13,21 @@ type User struct {
 }
 
 func (c User) GetUpdate(id bson.ObjectId) revel.Result {
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		action := "/User/" + id.Hex()
-		user := c.User
-		return c.Render(action, user)
+		user := c.ActiveUser
+		if user.CanBeUpdatedBy(c.MongoSession, c.ActiveUser) {
+			return c.Render(action, user)
+		}
+		return c.Forbidden("You are not allowed to edit this resource.")
 	}
 	return c.Redirect(User.GetLogin)
 }
 
 func (c User) PostUpdate(id bson.ObjectId, user *models.User, password models.Password) revel.Result {
-	// Weak access control (only let users change their own account)
-	if c.User.Id == id && user.Id == id {
+	if user.CanBeUpdatedBy(c.MongoSession, c.ActiveUser) {
 		// Don't trust user submitted id... load from session.
-		user.Id = c.User.Id
+		user.Id = c.ActiveUser.Id
 		user.Validate(c.Validation)
 
 		// Only validate the password if either is non-empty
@@ -52,29 +54,33 @@ func (c User) PostUpdate(id bson.ObjectId, user *models.User, password models.Pa
 }
 
 func (c User) PostCreate(user *models.User, password models.Password) revel.Result {
-	if exists := models.GetUserByEmail(c.MongoSession, user.Email); exists.Email == user.Email {
-		msg := fmt.Sprint("Account with ", user.Email, " already exists.")
-		c.Validation.Required(user.Email != exists.Email).
-			Message(msg)
+	if user.CanBeCreatedBy(c.MongoSession, c.ActiveUser) {
+		if exists := models.GetUserByEmail(c.MongoSession, user.Email); exists.Email == user.Email {
+			msg := fmt.Sprint("Account with ", user.Email, " already exists.")
+			c.Validation.Required(user.Email != exists.Email).
+				Message(msg)
+		} else {
+			user.Id = bson.NewObjectId()
+		}
+
+		user.Validate(c.Validation)
+		user.ValidatePassword(c.Validation, password)
+
+		if c.Validation.HasErrors() {
+			c.Validation.Keep()
+			c.FlashParams()
+			c.Flash.Error("Please correct the errors below.")
+			return c.Redirect(User.GetCreate)
+		}
+
+		user.Save(c.MongoSession, password)
+
+		c.Session["user"] = user.Email
+		c.Flash.Success("Welcome, " + user.String())
+		return c.Redirect(Application.Index)
 	} else {
-		user.Id = bson.NewObjectId()
+		return c.Forbidden("You are not allowed to create user accounts.")
 	}
-
-	user.Validate(c.Validation)
-	user.ValidatePassword(c.Validation, password)
-
-	if c.Validation.HasErrors() {
-		c.Validation.Keep()
-		c.FlashParams()
-		c.Flash.Error("Please correct the errors below.")
-		return c.Redirect(User.GetCreate)
-	}
-
-	user.Save(c.MongoSession, password)
-
-	c.Session["user"] = user.Email
-	c.Flash.Success("Welcome, " + user.String())
-	return c.Redirect(Application.Index)
 }
 
 func (c User) PostLogin(Email, Password string) revel.Result {
@@ -106,7 +112,10 @@ func (c User) GetLogin() revel.Result {
 func (c User) GetCreate() revel.Result {
 	action := "/User/PostCreate"
 	user := models.User{}
-	return c.Render(action, user)
+	if user.CanBeCreatedBy(c.MongoSession, c.ActiveUser) {
+		return c.Render(action, user)
+	}
+	return c.Forbidden("You are not allowed to create user accounts.")
 }
 
 func (c User) GetLogout() revel.Result {
@@ -118,15 +127,15 @@ func (c User) GetLogout() revel.Result {
 
 func (c User) GetDelete(id bson.ObjectId) revel.Result {
 	user := models.GetUserByObjectId(c.MongoSession, id)
-	if user != nil && user.CanBeDeletedBy(c.MongoSession, c.User) {
+	if user != nil && user.CanBeDeletedBy(c.MongoSession, c.ActiveUser) {
 		return c.Render()
 	}
-	return c.NotFound("No user matching this id")
+	return c.Forbidden("No user matching this id")
 }
 
 func (c User) GetRead(id bson.ObjectId) revel.Result {
 	user := models.GetUserByObjectId(c.MongoSession, id)
-	if user != nil && user.CanBeReadBy(c.MongoSession, c.User) {
+	if user != nil && user.CanBeReadBy(c.MongoSession, c.ActiveUser) {
 		return c.Render(user)
 	}
 
@@ -135,7 +144,7 @@ func (c User) GetRead(id bson.ObjectId) revel.Result {
 
 func (c User) Delete(id bson.ObjectId) revel.Result {
 	user := models.GetUserByObjectId(c.MongoSession, id)
-	if user != nil && user.CanBeDeletedBy(c.MongoSession, c.User) {
+	if user != nil && user.CanBeDeletedBy(c.MongoSession, c.ActiveUser) {
 		user.Delete(c.MongoSession)
 		c.Flash.Success("Deleted user ", user.String())
 	}
@@ -145,9 +154,9 @@ func (c User) Delete(id bson.ObjectId) revel.Result {
 func (c User) EditLinks(id bson.ObjectId) revel.Result {
 	canEdit := false
 	u := &models.User{}
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		u = models.GetUserByObjectId(c.MongoSession, id)
-		if u.CanBeUpdatedBy(c.MongoSession, c.User) {
+		if u.CanBeUpdatedBy(c.MongoSession, c.ActiveUser) {
 			canEdit = true
 		}
 	}

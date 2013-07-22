@@ -23,9 +23,9 @@ func (c Blog) Tag(tag string) revel.Result {
 }
 
 func (c Blog) GetDelete(id bson.ObjectId) revel.Result {
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		article := models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanBeDeletedBy(c.MongoSession, c.User) {
+		if article.CanBeDeletedBy(c.MongoSession, c.ActiveUser) {
 			return c.Render(article)
 		}
 		return c.Forbidden("You do not have permission to delete this resource.")
@@ -34,9 +34,9 @@ func (c Blog) GetDelete(id bson.ObjectId) revel.Result {
 }
 
 func (c Blog) Delete(id bson.ObjectId) revel.Result {
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		article := models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanBeDeletedBy(c.MongoSession, c.User) {
+		if article.CanBeDeletedBy(c.MongoSession, c.ActiveUser) {
 			article.Delete(c.MongoSession)
 		}
 	}
@@ -48,13 +48,13 @@ func (c Blog) Links(id bson.ObjectId) revel.Result {
 	canUpdate := false
 	canDelete := false
 	article := &models.Article{}
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		article = models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanBeUpdatedBy(c.MongoSession, c.User) {
+		if article.CanBeUpdatedBy(c.MongoSession, c.ActiveUser) {
 			canUpdate = true
 			links = true
 		}
-		if article.CanBeDeletedBy(c.MongoSession, c.User) {
+		if article.CanBeDeletedBy(c.MongoSession, c.ActiveUser) {
 			canDelete = true
 			links = true
 		}
@@ -63,17 +63,17 @@ func (c Blog) Links(id bson.ObjectId) revel.Result {
 }
 
 func (c Blog) GetCreate() revel.Result {
-	if c.User != nil {
-		article := models.Article{}
+	article := models.Article{}
+	if article.CanBeCreatedBy(c.MongoSession, c.ActiveUser) {
 		action := "/blog/create"
 		actionButton := "Create"
 		return c.Render(action, article, actionButton)
 	}
-	return c.Forbidden("You must be logged in to create articles.")
+	return c.Forbidden("You are not allowed to create articles.")
 }
 
 func (c Blog) PostCreate(article *models.Article) revel.Result {
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		article.Tags = strings.Split(c.Params.Values["article.Tags"][0], ",")
 		article.Validate(c.Validation)
 		if c.Validation.HasErrors() {
@@ -84,7 +84,7 @@ func (c Blog) PostCreate(article *models.Article) revel.Result {
 		}
 
 		// Set calculated fields
-		article.Author_id = c.User.Id
+		article.Author_id = c.ActiveUser.Id
 		article.Published = true
 		article.Posted = time.Now()
 		article.Id = bson.NewObjectId()
@@ -102,9 +102,9 @@ func (c Blog) GetRead(id bson.ObjectId) revel.Result {
 }
 
 func (c Blog) GetUpdate(id bson.ObjectId) revel.Result {
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		article := models.GetArticleByObjectId(c.MongoSession, id)
-		if article.CanBeUpdatedBy(c.MongoSession, c.User) {
+		if article.CanBeUpdatedBy(c.MongoSession, c.ActiveUser) {
 			action := "/Blog/Update"
 			actionButton := "Update"
 			return c.Render(action, article, actionButton)
@@ -115,9 +115,9 @@ func (c Blog) GetUpdate(id bson.ObjectId) revel.Result {
 }
 
 func (c Blog) Update(article *models.Article) revel.Result {
-	if c.User != nil {
+	if c.ActiveUser != nil {
 		check := models.GetArticleByObjectId(c.MongoSession, article.Id)
-		if check.CanBeUpdatedBy(c.MongoSession, c.User) {
+		if check.CanBeUpdatedBy(c.MongoSession, c.ActiveUser) {
 			article.Tags = strings.Split(c.Params.Values["article.Tags"][0], ",")
 			article.Validate(c.Validation)
 			if c.Validation.HasErrors() {
