@@ -52,6 +52,7 @@ eg.
     * Fix article sorting by date
 * Code Review & Refactoring
     * Rework any flakey abstractions
+    * Fix templates so that there are no hanging tags
     * Determine how code can be better re-used.
         * Template helper functions
         * App config for date formatting
