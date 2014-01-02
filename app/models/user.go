@@ -9,13 +9,12 @@ import (
 )
 
 type User struct {
-	Model
-	Id             bson.ObjectId `bson:"_id,omitempty"`
-	Firstname      string        `bson:"Firstname"`
-	Lastname       string        `bson:"Lastname"`
-	Email          string        `bson:"Email"`
-	HashedPassword []byte        `bson:"HashedPassword"`
-	Meta           map[string][]string
+	Model          `bson:",inline"`
+	Firstname      string              `bson:"Firstname"`
+	Lastname       string              `bson:"Lastname"`
+	Email          string              `bson:"Email"`
+	HashedPassword []byte              `bson:"HashedPassword"`
+	Meta           map[string][]string `bson:",omitempty"`
 }
 
 type Password struct {

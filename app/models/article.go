@@ -12,16 +12,15 @@ import (
 const trimLength = 300
 
 type Article struct {
-	Model
-	Id        bson.ObjectId `bson:"_id,omitempty"`
-	Author_id bson.ObjectId `bson:"Author_id"`
-	Published bool          `bson:"Published"`
-	Posted    time.Time     `bson:"Posted"`
-	Title     string        `bson:"Title"`
-	Body      string        `bson:"Body"`
-	Tags      []string      `bson:"Tags"`
-	Alias     string        `bson:"Alias"`
-	Meta      map[string]interface{}
+	Model     `bson:",inline"`
+	Author_id bson.ObjectId          `bson:"Author_id"`
+	Published bool                   `bson:"Published"`
+	Posted    time.Time              `bson:"Posted"`
+	Title     string                 `bson:"Title"`
+	Body      string                 `bson:"Body"`
+	Tags      []string               `bson:"Tags"`
+	Alias     string                 `bson:"Alias"`
+	Meta      map[string]interface{} `bson:",omitempty"`
 }
 
 func (article *Article) AddMeta(s *mgo.Session) {
