@@ -16,7 +16,7 @@ type Article struct {
 	Id        bson.ObjectId `bson:"_id,omitempty"`
 	Author_id bson.ObjectId `bson:"Author_id"`
 	Published bool          `bson:"Published"`
-	Posted    time.Time     `bson: "Posted"`
+	Posted    time.Time     `bson:"Posted"`
 	Title     string        `bson:"Title"`
 	Body      string        `bson:"Body"`
 	Tags      []string      `bson:"Tags"`
@@ -79,7 +79,7 @@ func GetArticleById(s *mgo.Session, Id string) *Article {
 func GetArticlesByDate(s *mgo.Session, limit int) []*Article {
 	articles := []*Article{}
 	a := new(Article)
-	query := Collection(a, s).Find(nil).Sort("{'Published': 1}").Limit(limit)
+	query := Collection(a, s).Find(bson.M{"Published": true}).Sort("-Posted").Limit(limit)
 	query.All(&articles)
 
 	for _, a := range articles {
@@ -91,7 +91,7 @@ func GetArticlesByDate(s *mgo.Session, limit int) []*Article {
 func GetArticlesByTag(s *mgo.Session, t string) []*Article {
 	articles := []*Article{}
 	a := new(Article)
-	query := Collection(a, s).Find(bson.M{"Tags": t})
+	query := Collection(a, s).Find(bson.M{"Published": true, "Tags": t}).Sort("-Posted")
 	query.All(&articles)
 
 	for _, a := range articles {
