@@ -49,7 +49,6 @@ eg.
     * Published/unpublished
     * Content pager
     * Article Pictures
-    * Fix article sorting by date
 * Code Review & Refactoring
     * Rework any flakey abstractions
     * Fix templates so that there are no hanging tags
