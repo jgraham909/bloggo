@@ -3,7 +3,7 @@ package models
 import (
 	"code.google.com/p/go.crypto/bcrypt"
 	"fmt"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )

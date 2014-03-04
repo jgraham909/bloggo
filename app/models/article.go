@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 	"github.com/russross/blackfriday"
 	"html/template"
 	"labix.org/v2/mgo"

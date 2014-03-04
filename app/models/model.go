@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/jgraham909/bloggo/app"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"reflect"

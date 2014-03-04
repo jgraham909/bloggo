@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/jgraham909/bloggo/app/models"
 	"github.com/jgraham909/revmgo"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 	"github.com/russross/blackfriday"
 	"html/template"
 	"labix.org/v2/mgo/bson"

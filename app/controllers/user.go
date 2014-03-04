@@ -4,7 +4,7 @@ import (
 	"code.google.com/p/go.crypto/bcrypt"
 	"fmt"
 	"github.com/jgraham909/bloggo/app/models"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 	"labix.org/v2/mgo/bson"
 )
 
