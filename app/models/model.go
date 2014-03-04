@@ -4,6 +4,7 @@ import (
 	"github.com/jgraham909/bloggo/app"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 	"reflect"
 	"strings"
 )
@@ -13,7 +14,9 @@ var (
 )
 
 // Empty struct to embed in models that will provide application default funcs.
-type Model struct{}
+type Model struct {
+	Id bson.ObjectId `bson:"_id,omitempty"`
+}
 
 func Collection(m interface{}, s *mgo.Session) *mgo.Collection {
 	typ := reflect.TypeOf(m)
