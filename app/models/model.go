@@ -6,7 +6,6 @@ import (
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"reflect"
-	"strings"
 )
 
 var (
@@ -19,9 +18,8 @@ type Model struct {
 }
 
 func Collection(m interface{}, s *mgo.Session) *mgo.Collection {
-	typ := reflect.TypeOf(m)
-	i := strings.LastIndex(typ.String(), ".") + 1
-	n := typ.String()[i:len(typ.String())]
+	typ := reflect.TypeOf(m).Elem()
+	n := typ.Name()
 
 	var found bool
 	var c string
